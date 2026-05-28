@@ -9,8 +9,12 @@ const baseAssumptions = {
   subscriptionCogs: 30,
   penetrationScale: 100,
   churnScale: 100,
-  teamCost: 4000000,
-  teamGrowth: 35,
+  teamHeadcount: 15,
+  monthlySalaryRmb: 20000,
+  monthlyRentRmb: 30000,
+  monthlySpendCapRmb: 400000,
+  usdCny: 7.2,
+  teamGrowth: 20,
   salesMarketingStart: 45,
   salesMarketingEnd: 18,
   rdPct: 8,
@@ -36,7 +40,11 @@ const inputs = {
   subscriptionCogs: document.getElementById("subscriptionCogs"),
   penetrationScale: document.getElementById("penetrationScale"),
   churnScale: document.getElementById("churnScale"),
-  teamCost: document.getElementById("teamCost"),
+  teamHeadcount: document.getElementById("teamHeadcount"),
+  monthlySalaryRmb: document.getElementById("monthlySalaryRmb"),
+  monthlyRentRmb: document.getElementById("monthlyRentRmb"),
+  monthlySpendCapRmb: document.getElementById("monthlySpendCapRmb"),
+  usdCny: document.getElementById("usdCny"),
   teamGrowth: document.getElementById("teamGrowth"),
   salesMarketingStart: document.getElementById("salesMarketingStart"),
   salesMarketingEnd: document.getElementById("salesMarketingEnd"),
@@ -65,6 +73,21 @@ function percent(value) {
   return `${(value * 100).toFixed(1)}%`;
 }
 
+function rmb(value) {
+  return `RMB ${Math.round(value).toLocaleString("en-US")}`;
+}
+
+function annualTeamCostUsd(model) {
+  const payrollAndRent = model.teamHeadcount * model.monthlySalaryRmb + model.monthlyRentRmb;
+  const monthlyTeamSpend = Math.min(payrollAndRent, model.monthlySpendCapRmb);
+  return (monthlyTeamSpend * 12) / model.usdCny;
+}
+
+function monthlyTeamSpendRmb(model) {
+  const payrollAndRent = model.teamHeadcount * model.monthlySalaryRmb + model.monthlyRentRmb;
+  return Math.min(payrollAndRent, model.monthlySpendCapRmb);
+}
+
 function calculateModel(model) {
   let endingSubscribers = 0;
   let endingCash = model.startingCash;
@@ -86,7 +109,7 @@ function calculateModel(model) {
     const grossProfit = hardwareGrossProfit + subscriptionGrossProfit;
     const salesMarketingRate =
       (model.salesMarketingStart + ((model.salesMarketingEnd - model.salesMarketingStart) * index) / (years.length - 1)) / 100;
-    const teamExpense = model.teamCost * Math.pow(1 + model.teamGrowth / 100, index);
+    const teamExpense = annualTeamCostUsd(model) * Math.pow(1 + model.teamGrowth / 100, index);
     const salesMarketingExpense = totalRevenue * salesMarketingRate;
     const rdExpense = totalRevenue * (model.rdPct / 100);
     const gaExpense = totalRevenue * (model.gaPct / 100);
@@ -138,7 +161,11 @@ function syncInputs() {
   inputs.subscriptionCogs.value = state.subscriptionCogs;
   inputs.penetrationScale.value = state.penetrationScale;
   inputs.churnScale.value = state.churnScale;
-  inputs.teamCost.value = state.teamCost;
+  inputs.teamHeadcount.value = state.teamHeadcount;
+  inputs.monthlySalaryRmb.value = state.monthlySalaryRmb;
+  inputs.monthlyRentRmb.value = state.monthlyRentRmb;
+  inputs.monthlySpendCapRmb.value = state.monthlySpendCapRmb;
+  inputs.usdCny.value = state.usdCny;
   inputs.teamGrowth.value = state.teamGrowth;
   inputs.salesMarketingStart.value = state.salesMarketingStart;
   inputs.salesMarketingEnd.value = state.salesMarketingEnd;
@@ -150,6 +177,8 @@ function syncInputs() {
   document.getElementById("penetrationScaleValue").textContent = `${state.penetrationScale}%`;
   document.getElementById("churnScaleValue").textContent = `${state.churnScale}%`;
   document.getElementById("teamGrowthValue").textContent = `${state.teamGrowth}%`;
+  document.getElementById("teamMonthlySpendValue").textContent = rmb(monthlyTeamSpendRmb(state));
+  document.getElementById("teamAnnualUsdValue").textContent = money(annualTeamCostUsd(state));
   document.getElementById("salesMarketingStartValue").textContent = `${state.salesMarketingStart}%`;
   document.getElementById("salesMarketingEndValue").textContent = `${state.salesMarketingEnd}%`;
   document.getElementById("rdPctValue").textContent = `${state.rdPct}%`;
@@ -165,7 +194,11 @@ function readInputs() {
   state.subscriptionCogs = Number(inputs.subscriptionCogs.value) || 0;
   state.penetrationScale = Number(inputs.penetrationScale.value) || 0;
   state.churnScale = Number(inputs.churnScale.value) || 0;
-  state.teamCost = Number(inputs.teamCost.value) || 0;
+  state.teamHeadcount = Number(inputs.teamHeadcount.value) || 0;
+  state.monthlySalaryRmb = Number(inputs.monthlySalaryRmb.value) || 0;
+  state.monthlyRentRmb = Number(inputs.monthlyRentRmb.value) || 0;
+  state.monthlySpendCapRmb = Number(inputs.monthlySpendCapRmb.value) || 0;
+  state.usdCny = Number(inputs.usdCny.value) || 1;
   state.teamGrowth = Number(inputs.teamGrowth.value) || 0;
   state.salesMarketingStart = Number(inputs.salesMarketingStart.value) || 0;
   state.salesMarketingEnd = Number(inputs.salesMarketingEnd.value) || 0;

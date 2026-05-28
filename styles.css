@@ -316,6 +316,27 @@ input[type="range"] {
   color: var(--coral);
 }
 
+.calc-hint {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid rgba(52, 168, 124, 0.22);
+  background: var(--mint-soft);
+}
+
+.calc-hint span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.calc-hint strong {
+  color: var(--green);
+  font-size: 15px;
+}
+
 .dashboard {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
