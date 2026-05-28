@@ -2,14 +2,23 @@
   color-scheme: light;
   --ink: #17202a;
   --muted: #667085;
-  --line: #d8dde7;
+  --line: #d6deea;
   --surface: #ffffff;
-  --soft: #f5f7fb;
-  --green: #14845f;
-  --teal: #0f7285;
-  --blue: #315fbd;
-  --red: #b44545;
-  --amber: #a66f14;
+  --soft: #f6f8fc;
+  --green: #12946f;
+  --teal: #0a8aa1;
+  --blue: #3f6ed3;
+  --red: #c54f55;
+  --amber: #c07a12;
+  --coral: #e46b52;
+  --violet: #7b61d8;
+  --mint: #34a87c;
+  --sky: #3d91df;
+  --rose-soft: #fff1ed;
+  --mint-soft: #ecfbf4;
+  --sky-soft: #eef6ff;
+  --gold-soft: #fff8e6;
+  --violet-soft: #f4f0ff;
 }
 
 * {
@@ -18,7 +27,10 @@
 
 body {
   margin: 0;
-  background: var(--soft);
+  background:
+    radial-gradient(circle at 8% 0%, rgba(228, 107, 82, 0.16), transparent 30%),
+    radial-gradient(circle at 92% 8%, rgba(61, 145, 223, 0.18), transparent 28%),
+    linear-gradient(135deg, #fff8e6 0%, #f3fbf7 38%, #eef6ff 72%, #fbf7ff 100%);
   color: var(--ink);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
@@ -44,7 +56,7 @@ input {
 
 .eyebrow {
   margin: 0 0 5px;
-  color: var(--teal);
+  color: var(--coral);
   font-size: 13px;
   font-weight: 800;
   letter-spacing: 0;
@@ -58,6 +70,7 @@ h2 {
 }
 
 h1 {
+  color: #142235;
   font-size: clamp(34px, 6vw, 64px);
   line-height: 0.95;
 }
@@ -71,8 +84,9 @@ h2 {
   grid-template-columns: repeat(3, 1fr);
   gap: 4px;
   padding: 4px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(63, 110, 211, 0.22);
   background: var(--surface);
+  box-shadow: 0 14px 32px rgba(48, 74, 109, 0.08);
 }
 
 .scenario-button,
@@ -90,7 +104,7 @@ h2 {
 }
 
 .scenario-button.active {
-  background: var(--ink);
+  background: linear-gradient(135deg, var(--blue), var(--violet));
   color: #fff;
 }
 
@@ -102,10 +116,53 @@ h2 {
 }
 
 .metric {
+  position: relative;
+  overflow: hidden;
   min-height: 112px;
   padding: 18px;
   border: 1px solid var(--line);
   background: var(--surface);
+  box-shadow: 0 16px 38px rgba(37, 57, 92, 0.08);
+}
+
+.metric::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 5px;
+  background: var(--blue);
+}
+
+.metric:nth-child(1) {
+  background: linear-gradient(180deg, var(--sky-soft), #ffffff 58%);
+}
+
+.metric:nth-child(1)::before {
+  background: linear-gradient(90deg, var(--sky), var(--blue));
+}
+
+.metric:nth-child(2) {
+  background: linear-gradient(180deg, var(--mint-soft), #ffffff 58%);
+}
+
+.metric:nth-child(2)::before {
+  background: linear-gradient(90deg, var(--mint), var(--green));
+}
+
+.metric:nth-child(3) {
+  background: linear-gradient(180deg, var(--gold-soft), #ffffff 58%);
+}
+
+.metric:nth-child(3)::before {
+  background: linear-gradient(90deg, #e6a329, var(--amber));
+}
+
+.metric:nth-child(4) {
+  background: linear-gradient(180deg, var(--violet-soft), #ffffff 58%);
+}
+
+.metric:nth-child(4)::before {
+  background: linear-gradient(90deg, var(--violet), var(--coral));
 }
 
 .metric span,
@@ -121,6 +178,22 @@ h2 {
   line-height: 1;
 }
 
+.metric:nth-child(1) strong {
+  color: var(--blue);
+}
+
+.metric:nth-child(2) strong {
+  color: var(--green);
+}
+
+.metric:nth-child(3) strong {
+  color: var(--amber);
+}
+
+.metric:nth-child(4) strong {
+  color: var(--violet);
+}
+
 .workspace {
   display: grid;
   grid-template-columns: 320px minmax(0, 1fr);
@@ -133,14 +206,16 @@ h2 {
 .chart-panel,
 .table-panel,
 .notes-panel {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(86, 116, 158, 0.22);
   background: var(--surface);
+  box-shadow: 0 16px 38px rgba(37, 57, 92, 0.07);
 }
 
 .controls {
   position: sticky;
   top: 16px;
   padding: 16px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
 }
 
 .panel-heading {
@@ -159,9 +234,9 @@ h2 {
 
 .ghost-button {
   padding: 7px 10px;
-  border: 1px solid var(--line);
-  background: var(--soft);
-  color: var(--ink);
+  border: 1px solid rgba(228, 107, 82, 0.24);
+  background: var(--rose-soft);
+  color: #9d3f32;
   font-weight: 700;
 }
 
@@ -173,8 +248,8 @@ h2 {
 .section-label {
   margin: 18px 0 0;
   padding: 13px 0 3px;
-  border-top: 2px solid var(--ink);
-  color: var(--teal);
+  border-top: 2px solid var(--coral);
+  color: var(--coral);
   font-size: 12px;
   font-weight: 900;
   letter-spacing: 0;
@@ -206,14 +281,14 @@ input[type="number"] {
   min-width: 0;
   height: 38px;
   padding: 7px 9px;
-  border: 1px solid var(--line);
-  background: #fff;
+  border: 1px solid #cfd9e8;
+  background: linear-gradient(180deg, #ffffff, #fbfdff);
   color: var(--ink);
 }
 
 input[type="range"] {
   width: 100%;
-  accent-color: var(--green);
+  accent-color: var(--coral);
 }
 
 .range-meta {
@@ -226,7 +301,7 @@ input[type="range"] {
 }
 
 .range-meta output {
-  color: var(--ink);
+  color: var(--coral);
 }
 
 .dashboard {
@@ -243,6 +318,14 @@ input[type="range"] {
   min-width: 0;
 }
 
+.chart-panel:nth-child(1) {
+  background: linear-gradient(180deg, var(--sky-soft), #ffffff 42%);
+}
+
+.chart-panel:nth-child(2) {
+  background: linear-gradient(180deg, var(--gold-soft), #ffffff 42%);
+}
+
 .notes-panel {
   grid-column: 1 / -1;
 }
@@ -254,10 +337,52 @@ input[type="range"] {
 }
 
 .note-card {
+  position: relative;
+  overflow: hidden;
   min-height: 230px;
   padding: 16px;
   border: 1px solid var(--line);
   background: #fbfcfe;
+}
+
+.note-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: var(--blue);
+}
+
+.note-card:nth-child(1) {
+  background: var(--sky-soft);
+}
+
+.note-card:nth-child(1)::before {
+  background: var(--sky);
+}
+
+.note-card:nth-child(2) {
+  background: var(--mint-soft);
+}
+
+.note-card:nth-child(2)::before {
+  background: var(--mint);
+}
+
+.note-card:nth-child(3) {
+  background: var(--gold-soft);
+}
+
+.note-card:nth-child(3)::before {
+  background: var(--amber);
+}
+
+.note-card:nth-child(4) {
+  background: var(--violet-soft);
+}
+
+.note-card:nth-child(4)::before {
+  background: var(--violet);
 }
 
 .note-card h3 {
@@ -316,7 +441,8 @@ td:first-child {
 }
 
 th {
-  color: var(--muted);
+  color: #38506e;
+  background: #f1f6ff;
   font-size: 12px;
   font-weight: 800;
   text-transform: uppercase;
@@ -336,16 +462,16 @@ td {
 }
 
 .grid-line {
-  stroke: #e8ebf1;
+  stroke: #dfe8f4;
   stroke-width: 1;
 }
 
 .hardware-bar {
-  fill: var(--blue);
+  fill: var(--sky);
 }
 
 .subscription-bar {
-  fill: var(--green);
+  fill: var(--coral);
 }
 
 .gross-line {
@@ -356,7 +482,7 @@ td {
 
 .operating-line {
   fill: none;
-  stroke: var(--teal);
+  stroke: var(--violet);
   stroke-width: 3;
 }
 

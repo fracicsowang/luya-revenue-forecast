@@ -260,11 +260,11 @@ function drawProfitChart(rows) {
   svg.insertAdjacentHTML("beforeend", `<path class="operating-line" d="${linePath(rows, "operatingProfit", maxValue, minValue, width, height, margin)}"></path>`);
   rows.forEach((row, index) => {
     const x = margin.left + index * ((width - margin.left - margin.right) / (rows.length - 1));
-    svg.insertAdjacentHTML("beforeend", `<circle cx="${x}" cy="${y(row.grossProfit)}" r="4" fill="#a66f14"></circle>`);
-    svg.insertAdjacentHTML("beforeend", `<circle cx="${x}" cy="${y(row.operatingProfit)}" r="4" fill="#0f7285"></circle>`);
+    svg.insertAdjacentHTML("beforeend", `<circle cx="${x}" cy="${y(row.grossProfit)}" r="4" fill="#c07a12"></circle>`);
+    svg.insertAdjacentHTML("beforeend", `<circle cx="${x}" cy="${y(row.operatingProfit)}" r="4" fill="#7b61d8"></circle>`);
   });
-  svg.insertAdjacentHTML("beforeend", `<rect x="${width - 202}" y="16" width="10" height="10" fill="#a66f14"></rect><text class="legend-text" x="${width - 186}" y="25">Gross Profit</text>`);
-  svg.insertAdjacentHTML("beforeend", `<rect x="${width - 96}" y="16" width="10" height="10" fill="#0f7285"></rect><text class="legend-text" x="${width - 80}" y="25">Operating</text>`);
+  svg.insertAdjacentHTML("beforeend", `<rect x="${width - 202}" y="16" width="10" height="10" fill="#c07a12"></rect><text class="legend-text" x="${width - 186}" y="25">Gross Profit</text>`);
+  svg.insertAdjacentHTML("beforeend", `<rect x="${width - 96}" y="16" width="10" height="10" fill="#7b61d8"></rect><text class="legend-text" x="${width - 80}" y="25">Operating</text>`);
 }
 
 function renderTable(rows) {
