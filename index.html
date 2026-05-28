@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LUYA Revenue Forecast</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="topbar">
+        <div>
+          <p class="eyebrow">LUYA Financial Model</p>
+          <h1>Revenue Forecast</h1>
+        </div>
+        <div class="scenario-toggle" role="group" aria-label="Scenario">
+          <button class="scenario-button" type="button" data-scenario="downside">Downside</button>
+          <button class="scenario-button active" type="button" data-scenario="base">Base</button>
+          <button class="scenario-button" type="button" data-scenario="upside">Upside</button>
+        </div>
+      </section>
+
+      <section class="summary-grid" aria-label="Key forecast metrics">
+        <article class="metric">
+          <span>2029 Revenue</span>
+          <strong id="metricRevenue">$0</strong>
+          <small id="metricRevenueDelta">Base case</small>
+        </article>
+        <article class="metric">
+          <span>2029 Gross Profit</span>
+          <strong id="metricGrossProfit">$0</strong>
+          <small id="metricGrossMargin">0.0% gross margin</small>
+        </article>
+        <article class="metric">
+          <span>2029 Operating Profit</span>
+          <strong id="metricOperatingProfit">$0</strong>
+          <small id="metricOperatingMargin">0.0% operating margin</small>
+        </article>
+        <article class="metric">
+          <span>Ending Subscribers</span>
+          <strong id="metricSubscribers">0</strong>
+          <small id="metricSubscriptionShare">0.0% subscription revenue</small>
+        </article>
+      </section>
+
+      <section class="workspace">
+        <aside class="controls" aria-label="Forecast assumptions">
+          <div class="panel-heading">
+            <h2>Assumptions</h2>
+            <button class="ghost-button" id="resetButton" type="button">Reset</button>
+          </div>
+
+          <div class="control-block">
+            <label for="tam">Target households</label>
+            <div class="number-row">
+              <input id="tam" type="number" min="1000000" step="1000000" />
+              <span>households</span>
+            </div>
+          </div>
+
+          <div class="control-block">
+            <label for="launchYearUnits">2026 unit target</label>
+            <div class="number-row">
+              <input id="launchYearUnits" type="number" min="0" step="100" />
+              <span>units</span>
+            </div>
+          </div>
+
+          <div class="control-block">
+            <label for="price">Hardware price</label>
+            <div class="number-row">
+              <span>$</span>
+              <input id="price" type="number" min="100" step="10" />
+            </div>
+          </div>
+
+          <div class="control-block">
+            <label for="hardwareCogs">Hardware COGS</label>
+            <div class="number-row">
+              <span>$</span>
+              <input id="hardwareCogs" type="number" min="50" step="10" />
+            </div>
+          </div>
+
+          <div class="control-block">
+            <label for="subscriptionFee">Annual subscription fee</label>
+            <div class="number-row">
+              <span>$</span>
+              <input id="subscriptionFee" type="number" min="0" step="12" />
+            </div>
+          </div>
+
+          <div class="control-block">
+            <label for="subscriptionCogs">Subscription COGS</label>
+            <input id="subscriptionCogs" type="range" min="5" max="60" step="1" />
+            <div class="range-meta">
+              <span>5%</span>
+              <output id="subscriptionCogsValue">30%</output>
+              <span>60%</span>
+            </div>
+          </div>
+
+          <div class="control-block">
+            <label for="penetrationScale">Penetration scale</label>
+            <input id="penetrationScale" type="range" min="50" max="175" step="5" />
+            <div class="range-meta">
+              <span>50%</span>
+              <output id="penetrationScaleValue">100%</output>
+              <span>175%</span>
+            </div>
+          </div>
+
+          <div class="control-block">
+            <label for="churnScale">Churn scale</label>
+            <input id="churnScale" type="range" min="50" max="150" step="5" />
+            <div class="range-meta">
+              <span>50%</span>
+              <output id="churnScaleValue">100%</output>
+              <span>150%</span>
+            </div>
+          </div>
+
+          <div class="section-label">Operating Expense Model</div>
+
+          <div class="control-block">
+            <label for="teamCost">2026 team cost</label>
+            <div class="number-row">
+              <span>$</span>
+              <input id="teamCost" type="number" min="0" step="100000" />
+            </div>
+          </div>
+
+          <div class="control-block">
+            <label for="teamGrowth">Team cost annual growth</label>
+            <input id="teamGrowth" type="range" min="0" max="80" step="1" />
+            <div class="range-meta">
+              <span>0%</span>
+              <output id="teamGrowthValue">35%</output>
+              <span>80%</span>
+            </div>
+          </div>
+
+          <div class="control-block">
+            <label for="salesMarketingStart">Sales & Marketing, 2026</label>
+            <input id="salesMarketingStart" type="range" min="5" max="70" step="1" />
+            <div class="range-meta">
+              <span>5%</span>
+              <output id="salesMarketingStartValue">45%</output>
+              <span>70%</span>
+            </div>
+          </div>
+
+          <div class="control-block">
+            <label for="salesMarketingEnd">Sales & Marketing, 2029</label>
+            <input id="salesMarketingEnd" type="range" min="5" max="45" step="1" />
+            <div class="range-meta">
+              <span>5%</span>
+              <output id="salesMarketingEndValue">18%</output>
+              <span>45%</span>
+            </div>
+          </div>
+
+          <div class="control-block">
+            <label for="rdPct">R&D as % of revenue</label>
+            <input id="rdPct" type="range" min="0" max="25" step="1" />
+            <div class="range-meta">
+              <span>0%</span>
+              <output id="rdPctValue">8%</output>
+              <span>25%</span>
+            </div>
+          </div>
+
+          <div class="control-block">
+            <label for="gaPct">G&A as % of revenue</label>
+            <input id="gaPct" type="range" min="0" max="20" step="1" />
+            <div class="range-meta">
+              <span>0%</span>
+              <output id="gaPctValue">6%</output>
+              <span>20%</span>
+            </div>
+          </div>
+
+          <div class="control-block">
+            <label for="supportCost">Support cost per active subscriber</label>
+            <div class="number-row">
+              <span>$</span>
+              <input id="supportCost" type="number" min="0" step="1" />
+              <span>/year</span>
+            </div>
+          </div>
+        </aside>
+
+        <section class="dashboard" aria-label="Forecast dashboard">
+          <div class="chart-panel">
+            <div class="panel-heading">
+              <h2>Revenue Mix</h2>
+              <span id="revenuePeakLabel"></span>
+            </div>
+            <svg id="revenueChart" class="chart" role="img" aria-label="Revenue by year"></svg>
+          </div>
+
+          <div class="chart-panel">
+            <div class="panel-heading">
+              <h2>Profitability</h2>
+              <span id="marginLabel"></span>
+            </div>
+            <svg id="profitChart" class="chart" role="img" aria-label="Profit by year"></svg>
+          </div>
+
+          <div class="table-panel">
+            <div class="panel-heading">
+              <h2>Annual Forecast</h2>
+              <span>USD</span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Year</th>
+                    <th>Units</th>
+                    <th>Hardware Revenue</th>
+                    <th>Subscription Revenue</th>
+                    <th>Total Revenue</th>
+                    <th>Gross Profit</th>
+                    <th>Operating Expenses</th>
+                    <th>Operating Profit</th>
+                    <th>Operating Margin</th>
+                    <th>Gross Margin</th>
+                  </tr>
+                </thead>
+                <tbody id="forecastRows"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="table-panel">
+            <div class="panel-heading">
+              <h2>Operating Expense Detail</h2>
+              <span>Auto-calculated by year</span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Year</th>
+                    <th>Team</th>
+                    <th>Sales & Marketing</th>
+                    <th>R&D</th>
+                    <th>G&A</th>
+                    <th>Support</th>
+                    <th>Total Opex</th>
+                    <th>S&M Rate</th>
+                  </tr>
+                </thead>
+                <tbody id="opexRows"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <section class="notes-panel" aria-label="Calculation notes and assumptions">
+            <div class="panel-heading">
+              <h2>Calculation Notes</h2>
+              <span>Base case logic</span>
+            </div>
+            <div class="notes-grid">
+              <article class="note-card">
+                <h3>Revenue Model</h3>
+                <ul>
+                  <li>Hardware units start from the 2026 target, currently 3,000 units.</li>
+                  <li>Hardware revenue = annual units sold x average hardware price.</li>
+                  <li>Subscription revenue = average active subscribers x annual subscription fee.</li>
+                  <li>Total revenue = hardware revenue + subscription revenue.</li>
+                </ul>
+              </article>
+
+              <article class="note-card">
+                <h3>Subscriber Dynamics</h3>
+                <ul>
+                  <li>New subscribers are assumed to equal annual hardware units sold.</li>
+                  <li>Ending subscribers = beginning subscribers - churned subscribers + new subscribers.</li>
+                  <li>Average subscribers = (beginning subscribers + ending subscribers) / 2.</li>
+                  <li>Churn follows the Excel base case: no launch-year churn, then 10%, 15%, and 15%.</li>
+                </ul>
+              </article>
+
+              <article class="note-card">
+                <h3>Base Assumptions</h3>
+                <ul>
+                  <li>Forecast starts in 2026 because 2025 has passed.</li>
+                  <li>2026 sales target is 3,000 units.</li>
+                  <li>2027-2029 penetration follows the Excel base case: 0.20%, 0.50%, and 1.20% of 30 million target households.</li>
+                  <li>Hardware price, COGS, subscription fee, and subscription COGS use the Excel base case unless changed in the controls.</li>
+                </ul>
+              </article>
+
+              <article class="note-card">
+                <h3>Profit & Opex</h3>
+                <ul>
+                  <li>Hardware gross profit = hardware revenue - units sold x hardware COGS.</li>
+                  <li>Subscription gross profit = subscription revenue x (1 - subscription COGS %).</li>
+                  <li>Operating expenses = team + sales & marketing + R&D + G&A + support.</li>
+                  <li>Operating profit = gross profit - operating expenses.</li>
+                </ul>
+              </article>
+            </div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
