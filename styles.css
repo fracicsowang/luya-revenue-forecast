@@ -110,7 +110,7 @@ h2 {
 
 .summary-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 12px;
 }
@@ -165,6 +165,14 @@ h2 {
   background: linear-gradient(90deg, var(--violet), var(--coral));
 }
 
+.metric:nth-child(5) {
+  background: linear-gradient(180deg, var(--rose-soft), #ffffff 58%);
+}
+
+.metric:nth-child(5)::before {
+  background: linear-gradient(90deg, var(--coral), var(--red));
+}
+
 .metric span,
 .metric small {
   display: block;
@@ -192,6 +200,10 @@ h2 {
 
 .metric:nth-child(4) strong {
   color: var(--violet);
+}
+
+.metric:nth-child(5) strong {
+  color: var(--coral);
 }
 
 .workspace {
@@ -425,6 +437,10 @@ table {
   width: 100%;
   min-width: 1120px;
   border-collapse: collapse;
+}
+
+.cash-table {
+  min-width: 720px;
 }
 
 th,

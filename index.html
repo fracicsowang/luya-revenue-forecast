@@ -41,6 +41,11 @@
           <strong id="metricSubscribers">0</strong>
           <small id="metricSubscriptionShare">0.0% subscription revenue</small>
         </article>
+        <article class="metric">
+          <span>2029 Ending Cash</span>
+          <strong id="metricCash">$0</strong>
+          <small id="metricCashStatus">Cash position</small>
+        </article>
       </section>
 
       <section class="workspace">
@@ -188,6 +193,16 @@
               <span>/year</span>
             </div>
           </div>
+
+          <div class="section-label">Cash Position</div>
+
+          <div class="control-block">
+            <label for="startingCash">Initial free cash</label>
+            <div class="number-row">
+              <span>$</span>
+              <input id="startingCash" type="number" min="0" step="100000" />
+            </div>
+          </div>
         </aside>
 
         <section class="dashboard" aria-label="Forecast dashboard">
@@ -257,6 +272,27 @@
             </div>
           </div>
 
+          <div class="table-panel">
+            <div class="panel-heading">
+              <h2>Cash Position</h2>
+              <span>Beginning cash + operating profit</span>
+            </div>
+            <div class="table-wrap">
+              <table class="cash-table">
+                <thead>
+                  <tr>
+                    <th>Year</th>
+                    <th>Beginning Cash</th>
+                    <th>Operating Profit</th>
+                    <th>Ending Cash</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="cashRows"></tbody>
+              </table>
+            </div>
+          </div>
+
           <section class="notes-panel" aria-label="Calculation notes and assumptions">
             <div class="panel-heading">
               <h2>Calculation Notes</h2>
@@ -300,6 +336,8 @@
                   <li>Subscription gross profit = subscription revenue x (1 - subscription COGS %).</li>
                   <li>Operating expenses = team + sales & marketing + R&D + G&A + support.</li>
                   <li>Operating profit = gross profit - operating expenses.</li>
+                  <li>Ending cash = beginning cash + operating profit, with initial free cash set to $1.8M by default.</li>
+                  <li>Cash position is a simplified view before taxes, financing, inventory, capex, and working-capital timing.</li>
                 </ul>
               </article>
             </div>

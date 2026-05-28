@@ -16,6 +16,7 @@ const baseAssumptions = {
   rdPct: 8,
   gaPct: 6,
   supportCost: 24,
+  startingCash: 1800000,
   penetration: [0, 0.002, 0.005, 0.012],
   churn: [0, 0.1, 0.15, 0.15],
 };
@@ -42,6 +43,7 @@ const inputs = {
   rdPct: document.getElementById("rdPct"),
   gaPct: document.getElementById("gaPct"),
   supportCost: document.getElementById("supportCost"),
+  startingCash: document.getElementById("startingCash"),
 };
 
 let state = { ...baseAssumptions };
@@ -65,6 +67,7 @@ function percent(value) {
 
 function calculateModel(model) {
   let endingSubscribers = 0;
+  let endingCash = model.startingCash;
 
   return years.map((year, index) => {
     const penetration = model.penetration[index] * (model.penetrationScale / 100);
@@ -90,6 +93,8 @@ function calculateModel(model) {
     const supportExpense = endingSubscribers * model.supportCost;
     const operatingExpenses = teamExpense + salesMarketingExpense + rdExpense + gaExpense + supportExpense;
     const operatingProfit = grossProfit - operatingExpenses;
+    const beginningCash = endingCash;
+    endingCash = beginningCash + operatingProfit;
     const grossMargin = totalRevenue === 0 ? 0 : grossProfit / totalRevenue;
     const operatingMargin = totalRevenue === 0 ? 0 : operatingProfit / totalRevenue;
 
@@ -112,6 +117,11 @@ function calculateModel(model) {
         salesMarketingRate,
       },
       operatingProfit,
+      cash: {
+        beginningCash,
+        cashChange: operatingProfit,
+        endingCash,
+      },
       grossMargin,
       operatingMargin,
       subscriptionShare: totalRevenue === 0 ? 0 : subscriptionRevenue / totalRevenue,
@@ -135,6 +145,7 @@ function syncInputs() {
   inputs.rdPct.value = state.rdPct;
   inputs.gaPct.value = state.gaPct;
   inputs.supportCost.value = state.supportCost;
+  inputs.startingCash.value = state.startingCash;
   document.getElementById("subscriptionCogsValue").textContent = `${state.subscriptionCogs}%`;
   document.getElementById("penetrationScaleValue").textContent = `${state.penetrationScale}%`;
   document.getElementById("churnScaleValue").textContent = `${state.churnScale}%`;
@@ -161,6 +172,7 @@ function readInputs() {
   state.rdPct = Number(inputs.rdPct.value) || 0;
   state.gaPct = Number(inputs.gaPct.value) || 0;
   state.supportCost = Number(inputs.supportCost.value) || 0;
+  state.startingCash = Number(inputs.startingCash.value) || 0;
   syncInputs();
   render();
 }
@@ -308,9 +320,28 @@ function renderOpexTable(rows) {
     .join("");
 }
 
+function renderCashTable(rows) {
+  document.getElementById("cashRows").innerHTML = rows
+    .map((row) => {
+      const cashClass = row.cash.endingCash < 0 ? "negative" : "";
+      const status = row.cash.endingCash < 0 ? "Funding needed" : row.cash.cashChange < 0 ? "Using cash" : "Cash building";
+      return `
+        <tr>
+          <td>${row.year}E</td>
+          <td>${money(row.cash.beginningCash)}</td>
+          <td class="${row.cash.cashChange < 0 ? "negative" : ""}">${money(row.cash.cashChange)}</td>
+          <td class="${cashClass}">${money(row.cash.endingCash)}</td>
+          <td class="${cashClass}">${status}</td>
+        </tr>
+      `;
+    })
+    .join("");
+}
+
 function render() {
   const rows = calculateModel(state);
   const finalYear = rows.at(-1);
+  const lowestCashYear = rows.reduce((lowest, row) => (row.cash.endingCash < lowest.cash.endingCash ? row : lowest), rows[0]);
   const baseRows = calculateModel(baseAssumptions);
   const baseRevenue = baseRows.at(-1).totalRevenue;
   const revenueDelta = baseRevenue === 0 ? 0 : finalYear.totalRevenue / baseRevenue - 1;
@@ -323,6 +354,12 @@ function render() {
   document.getElementById("metricOperatingMargin").textContent = `${percent(finalYear.operatingMargin)} operating margin`;
   document.getElementById("metricSubscribers").textContent = number(finalYear.endingSubscribers);
   document.getElementById("metricSubscriptionShare").textContent = `${percent(finalYear.subscriptionShare)} subscription revenue`;
+  document.getElementById("metricCash").textContent = money(finalYear.cash.endingCash);
+  document.getElementById("metricCash").classList.toggle("negative", finalYear.cash.endingCash < 0);
+  document.getElementById("metricCashStatus").textContent =
+    lowestCashYear.cash.endingCash < 0
+      ? `Lowest cash: ${money(lowestCashYear.cash.endingCash)} in ${lowestCashYear.year}`
+      : "Cash positive every year";
   document.getElementById("revenuePeakLabel").textContent = `${money(finalYear.totalRevenue)} in ${finalYear.year}`;
   document.getElementById("marginLabel").textContent = `${percent(finalYear.grossMargin)} gross margin`;
 
@@ -330,6 +367,7 @@ function render() {
   drawProfitChart(rows);
   renderTable(rows);
   renderOpexTable(rows);
+  renderCashTable(rows);
 }
 
 Object.values(inputs).forEach((input) => input.addEventListener("input", readInputs));
