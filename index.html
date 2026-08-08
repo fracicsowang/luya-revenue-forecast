@@ -3,388 +3,192 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>LUYA Revenue Forecast</title>
-    <link rel="stylesheet" href="styles.css?v=china-team" />
+    <meta name="description" content="LUYA 2026-2030 bottom-up product, consumables, and go-to-market forecast." />
+    <title>LUYA 5-Year Growth Model</title>
+    <link rel="stylesheet" href="styles.css?v=bottom-up-2030" />
   </head>
   <body>
-    <main class="app">
-      <section class="topbar">
+    <main class="app-shell">
+      <header class="topbar">
         <div>
-          <p class="eyebrow">LUYA Financial Model</p>
-          <h1>Revenue Forecast</h1>
+          <p class="eyebrow">LUYA Investor Model · 2026–2030</p>
+          <h1>5-Year Growth Model</h1>
+          <p class="subtitle">Product lines, channel build-up, installed base, and recurring consumables.</p>
         </div>
-        <div class="scenario-toggle" role="group" aria-label="Scenario">
-          <button class="scenario-button" type="button" data-scenario="downside">Downside</button>
-          <button class="scenario-button active" type="button" data-scenario="base">Base</button>
-          <button class="scenario-button" type="button" data-scenario="upside">Upside</button>
+        <div class="scenario-control" role="group" aria-label="Forecast scenario">
+          <button type="button" data-scenario="bear">Bear</button>
+          <button type="button" class="active" data-scenario="base">Base</button>
+          <button type="button" data-scenario="bull">Bull</button>
         </div>
+      </header>
+
+      <section class="kpi-grid" aria-label="Executive forecast">
+        <article class="kpi kpi-validation">
+          <span>2026</span>
+          <strong>Validation Year</strong>
+          <small>Founder 100 · no commercial revenue</small>
+        </article>
+        <article class="kpi kpi-blue">
+          <span>2027 Launch Units</span>
+          <strong id="kpi2027Units">0</strong>
+          <small>Space + Lab + Luya Y</small>
+        </article>
+        <article class="kpi kpi-green">
+          <span>2027 Revenue</span>
+          <strong id="kpi2027Revenue">$0</strong>
+          <small id="kpi2027Recurring">0% recurring</small>
+        </article>
+        <article class="kpi kpi-amber">
+          <span>2028 Scale Units</span>
+          <strong id="kpi2028Units">0</strong>
+          <small>Early scale-up year</small>
+        </article>
+        <article class="kpi kpi-violet">
+          <span>2030 Recurring Mix</span>
+          <strong id="kpiRecurringMix">0%</strong>
+          <small id="kpiInstalledBase">0 installed C-devices</small>
+        </article>
+        <article class="kpi kpi-coral">
+          <span>2030 TAM Check</span>
+          <strong id="kpiTamPenetration">0%</strong>
+          <small>Annual C-device units / 30M households</small>
+        </article>
       </section>
 
-      <section class="summary-grid" aria-label="Key forecast metrics">
-        <article class="metric">
-          <span>2029 Revenue</span>
-          <strong id="metricRevenue">$0</strong>
-          <small id="metricRevenueDelta">Base case</small>
-        </article>
-        <article class="metric">
-          <span>2029 Gross Profit</span>
-          <strong id="metricGrossProfit">$0</strong>
-          <small id="metricGrossMargin">0.0% gross margin</small>
-        </article>
-        <article class="metric">
-          <span>2029 Operating Profit</span>
-          <strong id="metricOperatingProfit">$0</strong>
-          <small id="metricOperatingMargin">0.0% operating margin</small>
-        </article>
-        <article class="metric">
-          <span>Ending Subscribers</span>
-          <strong id="metricSubscribers">0</strong>
-          <small id="metricSubscriptionShare">0.0% subscription revenue</small>
-        </article>
-        <article class="metric">
-          <span>2029 Ending Cash</span>
-          <strong id="metricCash">$0</strong>
-          <small id="metricCashStatus">Cash position</small>
-        </article>
-      </section>
-
-      <section class="workspace">
-        <aside class="controls" aria-label="Forecast assumptions">
-          <div class="panel-heading">
-            <h2>Assumptions</h2>
-            <button class="ghost-button" id="resetButton" type="button">Reset</button>
+      <section class="model-layout">
+        <aside class="assumptions" aria-label="Model assumptions">
+          <div class="panel-title">
+            <div>
+              <p class="section-kicker">Model Inputs</p>
+              <h2>Assumptions</h2>
+            </div>
+            <button type="button" class="reset-button" id="resetButton">Reset</button>
           </div>
 
-          <div class="control-block">
-            <label for="tam">Target households</label>
-            <div class="number-row">
-              <input id="tam" type="number" min="1000000" step="1000000" />
-              <span>households</span>
-            </div>
-          </div>
+          <details open>
+            <summary>Core & Cash</summary>
+            <label class="field"><span>TAM households</span><input id="tam" type="number" min="1000000" step="1000000" /></label>
+            <label class="field"><span>Initial free cash ($)</span><input id="startingCash" type="number" min="0" step="100000" /></label>
+            <label class="field"><span>Founder 100 units</span><input id="founderUnits" type="number" min="0" step="10" /></label>
+            <label class="field"><span>Validation program spend ($)</span><input id="validationSpend" type="number" min="0" step="25000" /></label>
+          </details>
 
-          <div class="control-block">
-            <label for="launchYearUnits">2026 unit target</label>
-            <div class="number-row">
-              <input id="launchYearUnits" type="number" min="0" step="100" />
-              <span>units</span>
-            </div>
-          </div>
+          <details open>
+            <summary>Product Economics</summary>
+            <div class="mini-grid headings"><span>Product</span><span>ASP</span><span>COGS</span></div>
+            <div class="mini-grid"><strong>X1 Space</strong><input id="spaceAsp" aria-label="X1 Space ASP" type="number" min="0" step="10" /><input id="spaceCogs" aria-label="X1 Space COGS" type="number" min="0" step="10" /></div>
+            <div class="mini-grid"><strong>X1 Lab</strong><input id="labAsp" aria-label="X1 Lab ASP" type="number" min="0" step="10" /><input id="labCogs" aria-label="X1 Lab COGS" type="number" min="0" step="10" /></div>
+            <div class="mini-grid"><strong>Luya Y</strong><input id="yAsp" aria-label="Luya Y ASP" type="number" min="0" step="100" /><input id="yCogs" aria-label="Luya Y COGS" type="number" min="0" step="100" /></div>
+          </details>
 
-          <div class="control-block">
-            <label for="price">Hardware price</label>
-            <div class="number-row">
-              <span>$</span>
-              <input id="price" type="number" min="100" step="10" />
+          <details open>
+            <summary>Consumables Plans</summary>
+            <div class="plan-inputs">
+              <div><strong>Standard</strong><small>8 trays / month</small></div>
+              <label>Price<input id="standardPrice" type="number" min="0" step="1" /></label>
+              <label>COGS<input id="standardCogs" type="number" min="0" step="1" /></label>
+              <div><strong>Power</strong><small>16 trays / month</small></div>
+              <label>Price<input id="powerPrice" type="number" min="0" step="1" /></label>
+              <label>COGS<input id="powerCogs" type="number" min="0" step="1" /></label>
             </div>
-          </div>
+          </details>
 
-          <div class="control-block">
-            <label for="hardwareCogs">Hardware COGS</label>
-            <div class="number-row">
-              <span>$</span>
-              <input id="hardwareCogs" type="number" min="50" step="10" />
-            </div>
-          </div>
+          <details open>
+            <summary>Space Subscription</summary>
+            <label class="field"><span>Attach rate (%)</span><input id="spaceAttach" type="number" min="0" max="100" step="1" /></label>
+            <label class="field"><span>Standard plan mix (%)</span><input id="spaceStandardMix" type="number" min="0" max="100" step="1" /></label>
+            <div class="retention-grid headings"><span>3M</span><span>6M</span><span>12M</span></div>
+            <div class="retention-grid"><input id="spaceRet3" aria-label="Space 3-month retention" type="number" min="0" max="100" /><input id="spaceRet6" aria-label="Space 6-month retention" type="number" min="0" max="100" /><input id="spaceRet12" aria-label="Space 12-month retention" type="number" min="0" max="100" /></div>
+          </details>
 
-          <div class="control-block">
-            <label for="subscriptionFee">Annual subscription fee</label>
-            <div class="number-row">
-              <span>$</span>
-              <input id="subscriptionFee" type="number" min="0" step="12" />
-            </div>
-          </div>
+          <details open>
+            <summary>Lab Subscription</summary>
+            <label class="field"><span>Attach rate (%)</span><input id="labAttach" type="number" min="0" max="100" step="1" /></label>
+            <label class="field"><span>Standard plan mix (%)</span><input id="labStandardMix" type="number" min="0" max="100" step="1" /></label>
+            <div class="retention-grid headings"><span>3M</span><span>6M</span><span>12M</span></div>
+            <div class="retention-grid"><input id="labRet3" aria-label="Lab 3-month retention" type="number" min="0" max="100" /><input id="labRet6" aria-label="Lab 6-month retention" type="number" min="0" max="100" /><input id="labRet12" aria-label="Lab 12-month retention" type="number" min="0" max="100" /></div>
+          </details>
 
-          <div class="control-block">
-            <label for="subscriptionCogs">Subscription COGS</label>
-            <input id="subscriptionCogs" type="range" min="5" max="60" step="1" />
-            <div class="range-meta">
-              <span>5%</span>
-              <output id="subscriptionCogsValue">30%</output>
-              <span>60%</span>
-            </div>
-          </div>
-
-          <div class="control-block">
-            <label for="penetrationScale">Penetration scale</label>
-            <input id="penetrationScale" type="range" min="50" max="175" step="5" />
-            <div class="range-meta">
-              <span>50%</span>
-              <output id="penetrationScaleValue">100%</output>
-              <span>175%</span>
-            </div>
-          </div>
-
-          <div class="control-block">
-            <label for="churnScale">Churn scale</label>
-            <input id="churnScale" type="range" min="50" max="150" step="5" />
-            <div class="range-meta">
-              <span>50%</span>
-              <output id="churnScaleValue">100%</output>
-              <span>150%</span>
-            </div>
-          </div>
-
-          <div class="section-label">Operating Expense Model</div>
-
-          <div class="control-block">
-            <label for="teamHeadcount">China team headcount</label>
-            <div class="number-row">
-              <input id="teamHeadcount" type="number" min="0" step="1" />
-              <span>people</span>
-            </div>
-          </div>
-
-          <div class="control-block">
-            <label for="monthlySalaryRmb">Average monthly salary</label>
-            <div class="number-row">
-              <span>RMB</span>
-              <input id="monthlySalaryRmb" type="number" min="0" step="1000" />
-            </div>
-          </div>
-
-          <div class="control-block">
-            <label for="monthlyRentRmb">Office rent per month</label>
-            <div class="number-row">
-              <span>RMB</span>
-              <input id="monthlyRentRmb" type="number" min="0" step="1000" />
-            </div>
-          </div>
-
-          <div class="control-block">
-            <label for="monthlySpendCapRmb">Monthly team spend cap</label>
-            <div class="number-row">
-              <span>RMB</span>
-              <input id="monthlySpendCapRmb" type="number" min="0" step="10000" />
-            </div>
-          </div>
-
-          <div class="control-block">
-            <label for="usdCny">RMB per USD</label>
-            <div class="number-row">
-              <input id="usdCny" type="number" min="1" step="0.1" />
-              <span>RMB/USD</span>
-            </div>
-          </div>
-
-          <div class="control-block">
-            <label for="teamGrowth">Team cost annual growth</label>
-            <input id="teamGrowth" type="range" min="0" max="80" step="1" />
-            <div class="range-meta">
-              <span>0%</span>
-              <output id="teamGrowthValue">20%</output>
-              <span>80%</span>
-            </div>
-            <div class="calc-hint">
-              <span>Current monthly team spend</span>
-              <strong id="teamMonthlySpendValue">RMB 330,000</strong>
-              <span>Annualized team cost</span>
-              <strong id="teamAnnualUsdValue">$550.0K</strong>
-            </div>
-          </div>
-
-          <div class="control-block">
-            <label for="salesMarketingStart">Sales & Marketing, 2026</label>
-            <input id="salesMarketingStart" type="range" min="5" max="70" step="1" />
-            <div class="range-meta">
-              <span>5%</span>
-              <output id="salesMarketingStartValue">45%</output>
-              <span>70%</span>
-            </div>
-          </div>
-
-          <div class="control-block">
-            <label for="salesMarketingEnd">Sales & Marketing, 2029</label>
-            <input id="salesMarketingEnd" type="range" min="5" max="45" step="1" />
-            <div class="range-meta">
-              <span>5%</span>
-              <output id="salesMarketingEndValue">18%</output>
-              <span>45%</span>
-            </div>
-          </div>
-
-          <div class="control-block">
-            <label for="rdPct">R&D as % of revenue</label>
-            <input id="rdPct" type="range" min="0" max="25" step="1" />
-            <div class="range-meta">
-              <span>0%</span>
-              <output id="rdPctValue">8%</output>
-              <span>25%</span>
-            </div>
-          </div>
-
-          <div class="control-block">
-            <label for="gaPct">G&A as % of revenue</label>
-            <input id="gaPct" type="range" min="0" max="20" step="1" />
-            <div class="range-meta">
-              <span>0%</span>
-              <output id="gaPctValue">6%</output>
-              <span>20%</span>
-            </div>
-          </div>
-
-          <div class="control-block">
-            <label for="supportCost">Support cost per active subscriber</label>
-            <div class="number-row">
-              <span>$</span>
-              <input id="supportCost" type="number" min="0" step="1" />
-              <span>/year</span>
-            </div>
-          </div>
-
-          <div class="section-label">Cash Position</div>
-
-          <div class="control-block">
-            <label for="startingCash">Initial free cash</label>
-            <div class="number-row">
-              <span>$</span>
-              <input id="startingCash" type="number" min="0" step="100000" />
-            </div>
-          </div>
+          <details>
+            <summary>China Team & Opex</summary>
+            <label class="field"><span>China headcount</span><input id="teamHeadcount" type="number" min="0" step="1" /></label>
+            <label class="field"><span>Average salary (RMB / month)</span><input id="monthlySalaryRmb" type="number" min="0" step="1000" /></label>
+            <label class="field"><span>Office rent (RMB / month)</span><input id="monthlyRentRmb" type="number" min="0" step="1000" /></label>
+            <label class="field"><span>Monthly spend cap (RMB)</span><input id="monthlySpendCapRmb" type="number" min="0" step="10000" /></label>
+            <label class="field"><span>RMB per USD</span><input id="usdCny" type="number" min="1" step="0.1" /></label>
+            <label class="field"><span>Team cost growth (%)</span><input id="teamGrowth" type="number" min="0" max="100" step="1" /></label>
+            <label class="field"><span>R&D (% revenue)</span><input id="rdPct" type="number" min="0" max="50" step="1" /></label>
+            <label class="field"><span>G&A (% revenue)</span><input id="gaPct" type="number" min="0" max="50" step="1" /></label>
+            <label class="field"><span>Support / active sub ($)</span><input id="supportCost" type="number" min="0" step="1" /></label>
+            <div class="calculated-box"><span>2026 annual team cost</span><strong id="teamCostPreview">$0</strong></div>
+          </details>
         </aside>
 
-        <section class="dashboard" aria-label="Forecast dashboard">
-          <div class="chart-panel">
-            <div class="panel-heading">
-              <h2>Revenue Mix</h2>
-              <span id="revenuePeakLabel"></span>
+        <div class="dashboard">
+          <section class="module validation-module" id="validation">
+            <div class="module-heading">
+              <div><p class="section-kicker">2026 · Validate</p><h2>Validation & Pre-Commercialization</h2></div>
+              <span class="management-tag">Management targets · Founder 100</span>
             </div>
-            <svg id="revenueChart" class="chart" role="img" aria-label="Revenue by year"></svg>
-          </div>
+            <div class="validation-grid">
+              <article><span>Product reliability</span><strong>&gt;95%</strong></article>
+              <article><span>NPS</span><strong>&gt;50</strong></article>
+              <article><span>Device active rate</span><strong>&gt;70%</strong></article>
+              <article><span>3-month retention</span><strong>&gt;85%</strong></article>
+              <article><span>Tray consumption</span><strong>8+ / mo</strong></article>
+              <article><span>Subscription attach</span><strong>&gt;55%</strong></article>
+              <article><span>UGC completion</span><strong>&gt;40%</strong></article>
+              <article><span>Failure rate</span><strong>&lt;5%</strong></article>
+            </div>
+            <p class="module-note">The 2026 Founder 100 cohort is excluded from commercial revenue. Its job is to validate product reliability, engagement, retention, consumables behavior, and advocacy before paid scale.</p>
+          </section>
 
-          <div class="chart-panel">
-            <div class="panel-heading">
-              <h2>Profitability</h2>
-              <span id="marginLabel"></span>
-            </div>
-            <svg id="profitChart" class="chart" role="img" aria-label="Profit by year"></svg>
-          </div>
+          <section class="module" id="executiveForecast">
+            <div class="module-heading"><div><p class="section-kicker">1 · Executive Forecast</p><h2>Revenue, Units & Recurring Mix</h2></div><span id="breakEvenBadge" class="status-badge">Break-even</span></div>
+            <div class="table-scroll"><table class="forecast-table"><thead><tr><th>Year</th><th>Stage</th><th>Units</th><th>Hardware</th><th>Consumables</th><th>Total Revenue</th><th>Gross Profit</th><th>Recurring</th><th>Ending Cash</th></tr></thead><tbody id="executiveRows"></tbody></table></div>
+          </section>
 
-          <div class="table-panel">
-            <div class="panel-heading">
-              <h2>Annual Forecast</h2>
-              <span>USD</span>
-            </div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Year</th>
-                    <th>Units</th>
-                    <th>Hardware Revenue</th>
-                    <th>Subscription Revenue</th>
-                    <th>Total Revenue</th>
-                    <th>Gross Profit</th>
-                    <th>Operating Expenses</th>
-                    <th>Operating Profit</th>
-                    <th>Operating Margin</th>
-                    <th>Gross Margin</th>
-                  </tr>
-                </thead>
-                <tbody id="forecastRows"></tbody>
-              </table>
-            </div>
-          </div>
+          <section class="module" id="productModel">
+            <div class="module-heading"><div><p class="section-kicker">2 · Product Line Model</p><h2>Units, ASP, COGS & Hardware Revenue</h2></div><span>Commercial revenue starts in 2027</span></div>
+            <div class="table-scroll"><table><thead><tr><th>Product</th><th>2026</th><th>2027</th><th>2028</th><th>2029</th><th>2030</th><th>ASP</th><th>Gross Margin</th></tr></thead><tbody id="productRows"></tbody></table></div>
+            <div class="product-callouts" id="productCallouts"></div>
+          </section>
 
-          <div class="table-panel">
-            <div class="panel-heading">
-              <h2>Operating Expense Detail</h2>
-              <span>Auto-calculated by year</span>
-            </div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Year</th>
-                    <th>Team</th>
-                    <th>Sales & Marketing</th>
-                    <th>R&D</th>
-                    <th>G&A</th>
-                    <th>Support</th>
-                    <th>Total Opex</th>
-                    <th>S&M Rate</th>
-                  </tr>
-                </thead>
-                <tbody id="opexRows"></tbody>
-              </table>
-            </div>
-          </div>
+          <section class="module" id="waterfall">
+            <div class="module-heading"><div><p class="section-kicker">Revenue Waterfall</p><h2>Where 2027 Revenue Comes From</h2></div><span id="waterfallTotal">Total $0</span></div>
+            <div class="waterfall" id="waterfallBars"></div>
+          </section>
 
-          <div class="table-panel">
-            <div class="panel-heading">
-              <h2>Cash Position</h2>
-              <span>Beginning cash + operating profit</span>
-            </div>
-            <div class="table-wrap">
-              <table class="cash-table">
-                <thead>
-                  <tr>
-                    <th>Year</th>
-                    <th>Beginning Cash</th>
-                    <th>Operating Profit</th>
-                    <th>Ending Cash</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody id="cashRows"></tbody>
-              </table>
-            </div>
-          </div>
+          <section class="module" id="consumablesModel">
+            <div class="module-heading"><div><p class="section-kicker">3 · Consumables Cohort Model</p><h2>Attach, Retain, Repurchase</h2></div><span class="management-tag">To be validated through Founder 100</span></div>
+            <div class="subscription-summary" id="subscriptionSummary"></div>
+            <div class="table-scroll"><table><thead><tr><th>Year</th><th>New C-Devices</th><th>Cumulative Installed Base</th><th>Ending Active Subs</th><th>Consumables Revenue</th><th>Revenue Mix</th></tr></thead><tbody id="cohortRows"></tbody></table></div>
+          </section>
 
-          <section class="notes-panel" aria-label="Calculation notes and assumptions">
-            <div class="panel-heading">
-              <h2>Calculation Notes</h2>
-              <span>Base case logic</span>
-            </div>
-            <div class="notes-grid">
-              <article class="note-card">
-                <h3>Revenue Model</h3>
-                <ul>
-                  <li>Hardware units start from the 2026 target, currently 3,000 units.</li>
-                  <li>Hardware revenue = annual units sold x average hardware price.</li>
-                  <li>Subscription revenue = average active subscribers x annual subscription fee.</li>
-                  <li>Total revenue = hardware revenue + subscription revenue.</li>
-                </ul>
-              </article>
-
-              <article class="note-card">
-                <h3>Subscriber Dynamics</h3>
-                <ul>
-                  <li>New subscribers are assumed to equal annual hardware units sold.</li>
-                  <li>Ending subscribers = beginning subscribers - churned subscribers + new subscribers.</li>
-                  <li>Average subscribers = (beginning subscribers + ending subscribers) / 2.</li>
-                  <li>Churn follows the Excel base case: no launch-year churn, then 10%, 15%, and 15%.</li>
-                </ul>
-              </article>
-
-              <article class="note-card">
-                <h3>Base Assumptions</h3>
-                <ul>
-                  <li>Forecast starts in 2026 because 2025 has passed.</li>
-                  <li>2026 sales target is 3,000 units.</li>
-                  <li>2027-2029 penetration follows the Excel base case: 0.20%, 0.50%, and 1.20% of 30 million target households.</li>
-                  <li>Hardware price, COGS, subscription fee, and subscription COGS use the Excel base case unless changed in the controls.</li>
-                </ul>
-              </article>
-
-              <article class="note-card">
-                <h3>Profit & Opex</h3>
-                <ul>
-                  <li>Hardware gross profit = hardware revenue - units sold x hardware COGS.</li>
-                  <li>Subscription gross profit = subscription revenue x (1 - subscription COGS %).</li>
-                  <li>Team cost is based on China operations: headcount x average monthly salary + office rent, capped by monthly spend cap.</li>
-                  <li>Operating expenses = China team + sales & marketing + R&D + G&A + support.</li>
-                  <li>Operating profit = gross profit - operating expenses.</li>
-                  <li>Ending cash = beginning cash + operating profit, with initial free cash set to $1.8M by default.</li>
-                  <li>Cash position is a simplified view before taxes, financing, inventory, capex, and working-capital timing.</li>
-                </ul>
-              </article>
+          <section class="module" id="gtmModel">
+            <div class="module-heading"><div><p class="section-kicker">4 · Go-to-Market Build-up</p><h2>X1 Space Channel Sources</h2></div><span>Channels sum to annual Space units</span></div>
+            <div class="table-scroll"><table class="gtm-table"><thead><tr><th>Channel</th><th>2026</th><th>2027</th><th>2028</th><th>2029</th><th>2030</th></tr></thead><tbody id="gtmRows"></tbody><tfoot id="gtmFooter"></tfoot></table></div>
+            <div class="stage-timeline">
+              <article><strong>2026 · Validate</strong><span>Founder 100 · reliability · retention · UGC</span></article>
+              <article><strong>2027 · Prove PMF</strong><span>DTC · KOL/KOC · paid · Amazon · early B2B</span></article>
+              <article><strong>2028 · Scale</strong><span>Performance marketing · PR flywheel · retail pilot · international</span></article>
+              <article><strong>2029–30 · Expand</strong><span>Retail · distribution · celebrity · new markets · product halo</span></article>
             </div>
           </section>
-        </section>
+
+          <section class="module investor-module" id="investorView">
+            <div class="module-heading"><div><p class="section-kicker">5 · Scenario & Investor View</p><h2>Sanity Checks, Cash Need & Break-even</h2></div><span>Bottom-up forecast · TAM as context only</span></div>
+            <div class="investor-grid">
+              <article><span>2030 annual C-device penetration</span><strong id="investorTam">0%</strong><small>Annual units ÷ TAM</small></article>
+              <article><span>2030 cumulative installed base</span><strong id="investorInstalled">0</strong><small>Space + Lab shipments</small></article>
+              <article><span>Peak external funding need</span><strong id="investorFunding">$0</strong><small id="investorFundingYear">No funding gap</small></article>
+              <article><span>Operating break-even</span><strong id="investorBreakEven">—</strong><small>First positive operating-profit year</small></article>
+            </div>
+            <div class="scenario-comparison" id="scenarioComparison"></div>
+          </section>
+        </div>
       </section>
     </main>
-
-    <script src="app.js?v=china-team"></script>
+    <script src="app.js?v=bottom-up-2030"></script>
   </body>
 </html>

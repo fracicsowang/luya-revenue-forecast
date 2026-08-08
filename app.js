@@ -1,67 +1,114 @@
-const years = [2026, 2027, 2028, 2029];
+const years = [2026, 2027, 2028, 2029, 2030];
+const stages = ["Validate", "Prove PMF", "Scale", "Expand", "Expand"];
 
-const baseAssumptions = {
+const defaultModel = {
   tam: 30000000,
-  launchYearUnits: 3000,
-  price: 899,
-  hardwareCogs: 399,
-  subscriptionFee: 360,
-  subscriptionCogs: 30,
-  penetrationScale: 100,
-  churnScale: 100,
-  teamHeadcount: 15,
-  monthlySalaryRmb: 20000,
-  monthlyRentRmb: 30000,
-  monthlySpendCapRmb: 400000,
-  usdCny: 7.2,
-  teamGrowth: 20,
-  salesMarketingStart: 45,
-  salesMarketingEnd: 18,
-  rdPct: 8,
-  gaPct: 6,
-  supportCost: 24,
   startingCash: 1800000,
-  penetration: [0, 0.002, 0.005, 0.012],
-  churn: [0, 0.1, 0.15, 0.15],
+  founderUnits: 100,
+  validationSpend: 250000,
+  products: {
+    space: { name: "X1 Space", asp: 899, cogs: 399 },
+    lab: { name: "X1 Lab", asp: 1499, cogs: 650 },
+    y: { name: "Luya Y / B2B", asp: 4999, cogs: 2200 },
+  },
+  units: {
+    lab: [0, 5000, 15000, 35000, 65000],
+    y: [0, 1000, 2500, 5000, 8000],
+  },
+  gtm: {
+    founder: { label: "Founder / Waitlist / Organic", values: [100, 2000, 4000, 7000, 10000] },
+    kol: { label: "KOL / KOC / Affiliate", values: [0, 4000, 12000, 25000, 40000] },
+    paid: { label: "Meta / Google / Performance", values: [0, 4000, 14000, 32000, 60000] },
+    amazon: { label: "Amazon / Marketplace", values: [0, 2000, 7000, 18000, 35000] },
+    organic: { label: "PR / Organic / Referral", values: [0, 1500, 4000, 8000, 14000] },
+    retail: { label: "Retail / Distributor / Other", values: [0, 1500, 4000, 10000, 21000] },
+  },
+  plans: {
+    standard: { price: 29, cogs: 9, trays: 8 },
+    power: { price: 50, cogs: 16, trays: 16 },
+  },
+  subscriptions: {
+    space: { attach: 55, standardMix: 75, ret3: 85, ret6: 75, ret12: 65 },
+    lab: { attach: 75, standardMix: 50, ret3: 90, ret6: 82, ret12: 75 },
+  },
+  opex: {
+    teamHeadcount: 15,
+    monthlySalaryRmb: 20000,
+    monthlyRentRmb: 30000,
+    monthlySpendCapRmb: 400000,
+    usdCny: 7.2,
+    teamGrowth: 20,
+    salesMarketingRates: [0, 35, 28, 22, 18],
+    rdPct: 8,
+    gaPct: 6,
+    supportCost: 24,
+  },
 };
 
-const scenarioScales = {
-  downside: { penetrationScale: 75, churnScale: 115 },
-  base: { penetrationScale: 100, churnScale: 100 },
-  upside: { penetrationScale: 125, churnScale: 90 },
+const scenarioConfig = {
+  bear: { label: "Bear", unitScale: 0.75, attachDelta: -8, retentionDelta: -5, cogsScale: 1.05, smDelta: 4 },
+  base: { label: "Base", unitScale: 1, attachDelta: 0, retentionDelta: 0, cogsScale: 1, smDelta: 0 },
+  bull: { label: "Bull", unitScale: 1.25, attachDelta: 5, retentionDelta: 3, cogsScale: 0.97, smDelta: -2 },
 };
 
-const inputs = {
-  tam: document.getElementById("tam"),
-  launchYearUnits: document.getElementById("launchYearUnits"),
-  price: document.getElementById("price"),
-  hardwareCogs: document.getElementById("hardwareCogs"),
-  subscriptionFee: document.getElementById("subscriptionFee"),
-  subscriptionCogs: document.getElementById("subscriptionCogs"),
-  penetrationScale: document.getElementById("penetrationScale"),
-  churnScale: document.getElementById("churnScale"),
-  teamHeadcount: document.getElementById("teamHeadcount"),
-  monthlySalaryRmb: document.getElementById("monthlySalaryRmb"),
-  monthlyRentRmb: document.getElementById("monthlyRentRmb"),
-  monthlySpendCapRmb: document.getElementById("monthlySpendCapRmb"),
-  usdCny: document.getElementById("usdCny"),
-  teamGrowth: document.getElementById("teamGrowth"),
-  salesMarketingStart: document.getElementById("salesMarketingStart"),
-  salesMarketingEnd: document.getElementById("salesMarketingEnd"),
-  rdPct: document.getElementById("rdPct"),
-  gaPct: document.getElementById("gaPct"),
-  supportCost: document.getElementById("supportCost"),
-  startingCash: document.getElementById("startingCash"),
+let model = structuredClone(defaultModel);
+let activeScenario = "base";
+
+const inputBindings = {
+  tam: ["tam"],
+  startingCash: ["startingCash"],
+  founderUnits: ["founderUnits"],
+  validationSpend: ["validationSpend"],
+  spaceAsp: ["products", "space", "asp"],
+  spaceCogs: ["products", "space", "cogs"],
+  labAsp: ["products", "lab", "asp"],
+  labCogs: ["products", "lab", "cogs"],
+  yAsp: ["products", "y", "asp"],
+  yCogs: ["products", "y", "cogs"],
+  standardPrice: ["plans", "standard", "price"],
+  standardCogs: ["plans", "standard", "cogs"],
+  powerPrice: ["plans", "power", "price"],
+  powerCogs: ["plans", "power", "cogs"],
+  spaceAttach: ["subscriptions", "space", "attach"],
+  spaceStandardMix: ["subscriptions", "space", "standardMix"],
+  spaceRet3: ["subscriptions", "space", "ret3"],
+  spaceRet6: ["subscriptions", "space", "ret6"],
+  spaceRet12: ["subscriptions", "space", "ret12"],
+  labAttach: ["subscriptions", "lab", "attach"],
+  labStandardMix: ["subscriptions", "lab", "standardMix"],
+  labRet3: ["subscriptions", "lab", "ret3"],
+  labRet6: ["subscriptions", "lab", "ret6"],
+  labRet12: ["subscriptions", "lab", "ret12"],
+  teamHeadcount: ["opex", "teamHeadcount"],
+  monthlySalaryRmb: ["opex", "monthlySalaryRmb"],
+  monthlyRentRmb: ["opex", "monthlyRentRmb"],
+  monthlySpendCapRmb: ["opex", "monthlySpendCapRmb"],
+  usdCny: ["opex", "usdCny"],
+  teamGrowth: ["opex", "teamGrowth"],
+  rdPct: ["opex", "rdPct"],
+  gaPct: ["opex", "gaPct"],
+  supportCost: ["opex", "supportCost"],
 };
 
-let state = { ...baseAssumptions };
+function clamp(value, min = 0, max = 1) {
+  return Math.min(max, Math.max(min, value));
+}
 
-function money(value) {
+function getPath(object, path) {
+  return path.reduce((value, key) => value[key], object);
+}
+
+function setPath(object, path, value) {
+  const parent = path.slice(0, -1).reduce((target, key) => target[key], object);
+  parent[path.at(-1)] = value;
+}
+
+function money(value, digits = 1) {
   const abs = Math.abs(value);
   const sign = value < 0 ? "-" : "";
-  if (abs >= 1_000_000_000) return `${sign}$${(abs / 1_000_000_000).toFixed(2)}B`;
-  if (abs >= 1_000_000) return `${sign}$${(abs / 1_000_000).toFixed(1)}M`;
-  if (abs >= 1_000) return `${sign}$${(abs / 1_000).toFixed(1)}K`;
+  if (abs >= 1e9) return `${sign}$${(abs / 1e9).toFixed(2)}B`;
+  if (abs >= 1e6) return `${sign}$${(abs / 1e6).toFixed(digits)}M`;
+  if (abs >= 1e3) return `${sign}$${(abs / 1e3).toFixed(digits)}K`;
   return `${sign}$${abs.toFixed(0)}`;
 }
 
@@ -69,351 +116,319 @@ function number(value) {
   return Math.round(value).toLocaleString("en-US");
 }
 
-function percent(value) {
-  return `${(value * 100).toFixed(1)}%`;
+function compactNumber(value) {
+  if (Math.abs(value) >= 1e6) return `${(value / 1e6).toFixed(1)}M`;
+  if (Math.abs(value) >= 1e3) return `${(value / 1e3).toFixed(value >= 100000 ? 0 : 1)}K`;
+  return number(value);
 }
 
-function rmb(value) {
-  return `RMB ${Math.round(value).toLocaleString("en-US")}`;
+function percent(value, digits = 1) {
+  return `${(value * 100).toFixed(digits)}%`;
 }
 
-function annualTeamCostUsd(model) {
-  const payrollAndRent = model.teamHeadcount * model.monthlySalaryRmb + model.monthlyRentRmb;
-  const monthlyTeamSpend = Math.min(payrollAndRent, model.monthlySpendCapRmb);
-  return (monthlyTeamSpend * 12) / model.usdCny;
+function annualTeamCost(sourceModel) {
+  const opex = sourceModel.opex;
+  const payrollAndRent = opex.teamHeadcount * opex.monthlySalaryRmb + opex.monthlyRentRmb;
+  const monthlySpend = Math.min(payrollAndRent, opex.monthlySpendCapRmb);
+  return (monthlySpend * 12) / Math.max(opex.usdCny, 0.1);
 }
 
-function monthlyTeamSpendRmb(model) {
-  const payrollAndRent = model.teamHeadcount * model.monthlySalaryRmb + model.monthlyRentRmb;
-  return Math.min(payrollAndRent, model.monthlySpendCapRmb);
+function spaceBaseUnits(sourceModel) {
+  return years.map((_, index) => {
+    if (index === 0) return sourceModel.founderUnits;
+    return Object.values(sourceModel.gtm).reduce((total, channel) => total + channel.values[index], 0);
+  });
 }
 
-function calculateModel(model) {
-  let endingSubscribers = 0;
-  let endingCash = model.startingCash;
+function planEconomics(sourceModel, subscription) {
+  const standardMix = clamp(subscription.standardMix / 100);
+  const powerMix = 1 - standardMix;
+  const monthlyRevenue = standardMix * sourceModel.plans.standard.price + powerMix * sourceModel.plans.power.price;
+  const monthlyCogs = standardMix * sourceModel.plans.standard.cogs + powerMix * sourceModel.plans.power.cogs;
+  return { annualRevenue: monthlyRevenue * 12, annualCogs: monthlyCogs * 12 };
+}
 
-  return years.map((year, index) => {
-    const penetration = model.penetration[index] * (model.penetrationScale / 100);
-    const units = index === 0 ? model.launchYearUnits * (model.penetrationScale / 100) : model.tam * penetration;
-    const startingSubscribers = endingSubscribers;
-    const churn = index === 0 ? 0 : model.churn[index] * (model.churnScale / 100);
-    const churnedSubscribers = startingSubscribers * churn;
-    endingSubscribers = startingSubscribers - churnedSubscribers + units;
-    const averageSubscribers = (startingSubscribers + endingSubscribers) / 2;
+function adjustedSubscription(subscription, scenario) {
+  return {
+    attach: clamp((subscription.attach + scenario.attachDelta) / 100),
+    ret3: clamp((subscription.ret3 + scenario.retentionDelta) / 100),
+    ret6: clamp((subscription.ret6 + scenario.retentionDelta) / 100),
+    ret12: clamp((subscription.ret12 + scenario.retentionDelta) / 100),
+    standardMix: subscription.standardMix,
+  };
+}
 
-    const hardwareRevenue = units * model.price;
-    const subscriptionRevenue = averageSubscribers * model.subscriptionFee;
-    const totalRevenue = hardwareRevenue + subscriptionRevenue;
-    const hardwareGrossProfit = hardwareRevenue - units * model.hardwareCogs;
-    const subscriptionGrossProfit = subscriptionRevenue * (1 - model.subscriptionCogs / 100);
-    const grossProfit = hardwareGrossProfit + subscriptionGrossProfit;
-    const salesMarketingRate =
-      (model.salesMarketingStart + ((model.salesMarketingEnd - model.salesMarketingStart) * index) / (years.length - 1)) / 100;
-    const teamExpense = annualTeamCostUsd(model) * Math.pow(1 + model.teamGrowth / 100, index);
-    const salesMarketingExpense = totalRevenue * salesMarketingRate;
-    const rdExpense = totalRevenue * (model.rdPct / 100);
-    const gaExpense = totalRevenue * (model.gaPct / 100);
-    const supportExpense = endingSubscribers * model.supportCost;
-    const operatingExpenses = teamExpense + salesMarketingExpense + rdExpense + gaExpense + supportExpense;
+function calculateForecast(sourceModel, scenarioName = activeScenario) {
+  const scenario = scenarioConfig[scenarioName];
+  const rawSpaceUnits = spaceBaseUnits(sourceModel);
+  const units = {
+    space: rawSpaceUnits.map((value, index) => index === 0 ? sourceModel.founderUnits : Math.round(value * scenario.unitScale)),
+    lab: sourceModel.units.lab.map((value, index) => index === 0 ? 0 : Math.round(value * scenario.unitScale)),
+    y: sourceModel.units.y.map((value, index) => index === 0 ? 0 : Math.round(value * scenario.unitScale)),
+  };
+
+  const subscriptions = {
+    space: adjustedSubscription(sourceModel.subscriptions.space, scenario),
+    lab: adjustedSubscription(sourceModel.subscriptions.lab, scenario),
+  };
+  const economics = {
+    space: planEconomics(sourceModel, sourceModel.subscriptions.space),
+    lab: planEconomics(sourceModel, sourceModel.subscriptions.lab),
+  };
+
+  let activeSubs = { space: 0, lab: 0 };
+  let cash = sourceModel.startingCash;
+  let installedBase = 0;
+  const rows = [];
+
+  years.forEach((year, index) => {
+    const commercialSpaceUnits = index === 0 ? 0 : units.space[index];
+    const commercialLabUnits = index === 0 ? 0 : units.lab[index];
+    const commercialYUnits = index === 0 ? 0 : units.y[index];
+    const productUnits = { space: commercialSpaceUnits, lab: commercialLabUnits, y: commercialYUnits };
+    const cDeviceUnits = commercialSpaceUnits + commercialLabUnits;
+    const totalUnits = cDeviceUnits + commercialYUnits;
+    installedBase += cDeviceUnits;
+
+    const hardware = {};
+    let hardwareRevenue = 0;
+    let hardwareCogs = 0;
+    ["space", "lab", "y"].forEach((key) => {
+      const product = sourceModel.products[key];
+      const revenue = productUnits[key] * product.asp;
+      const cogs = productUnits[key] * product.cogs * scenario.cogsScale;
+      hardware[key] = { units: productUnits[key], revenue, cogs, grossProfit: revenue - cogs };
+      hardwareRevenue += revenue;
+      hardwareCogs += cogs;
+    });
+
+    const consumables = {};
+    let consumablesRevenue = 0;
+    let consumablesCogs = 0;
+    ["space", "lab"].forEach((key) => {
+      const subscription = subscriptions[key];
+      const plan = economics[key];
+      const beginningActive = activeSubs[key];
+      const newAttached = productUnits[key] * subscription.attach;
+      const firstYearRetentionIndex = 0.25 + 0.5 * subscription.ret3 + 0.25 * subscription.ret6;
+      const newCohortRevenueFactor = 0.5 * firstYearRetentionIndex;
+      const existingRevenueFactor = (1 + subscription.ret12) / 2;
+      const revenue = newAttached * plan.annualRevenue * newCohortRevenueFactor + beginningActive * plan.annualRevenue * existingRevenueFactor;
+      const cogs = newAttached * plan.annualCogs * newCohortRevenueFactor + beginningActive * plan.annualCogs * existingRevenueFactor;
+      const endingActive = beginningActive * subscription.ret12 + newAttached * subscription.ret6;
+      consumables[key] = { beginningActive, newAttached, endingActive, revenue, cogs };
+      activeSubs[key] = endingActive;
+      consumablesRevenue += revenue;
+      consumablesCogs += cogs;
+    });
+
+    const totalRevenue = hardwareRevenue + consumablesRevenue;
+    const grossProfit = totalRevenue - hardwareCogs - consumablesCogs;
+    const teamExpense = annualTeamCost(sourceModel) * Math.pow(1 + sourceModel.opex.teamGrowth / 100, index);
+    const smRate = index === 0 ? 0 : clamp((sourceModel.opex.salesMarketingRates[index] + scenario.smDelta) / 100, 0, 0.8);
+    const salesMarketingExpense = totalRevenue * smRate;
+    const rdExpense = totalRevenue * sourceModel.opex.rdPct / 100;
+    const gaExpense = totalRevenue * sourceModel.opex.gaPct / 100;
+    const supportExpense = (activeSubs.space + activeSubs.lab) * sourceModel.opex.supportCost;
+    const validationExpense = index === 0
+      ? sourceModel.validationSpend + sourceModel.founderUnits * sourceModel.products.space.cogs * scenario.cogsScale
+      : 0;
+    const operatingExpenses = teamExpense + salesMarketingExpense + rdExpense + gaExpense + supportExpense + validationExpense;
     const operatingProfit = grossProfit - operatingExpenses;
-    const beginningCash = endingCash;
-    endingCash = beginningCash + operatingProfit;
-    const grossMargin = totalRevenue === 0 ? 0 : grossProfit / totalRevenue;
-    const operatingMargin = totalRevenue === 0 ? 0 : operatingProfit / totalRevenue;
+    const beginningCash = cash;
+    cash += operatingProfit;
 
-    return {
+    rows.push({
       year,
-      units,
-      startingSubscribers,
-      endingSubscribers,
+      stage: stages[index],
+      units: productUnits,
+      cDeviceUnits,
+      totalUnits,
+      installedBase,
+      hardware,
       hardwareRevenue,
-      subscriptionRevenue,
+      hardwareCogs,
+      consumables,
+      activeSubscribers: activeSubs.space + activeSubs.lab,
+      consumablesRevenue,
+      consumablesCogs,
       totalRevenue,
       grossProfit,
-      operatingExpenses,
-      opex: {
-        teamExpense,
-        salesMarketingExpense,
-        rdExpense,
-        gaExpense,
-        supportExpense,
-        salesMarketingRate,
-      },
+      grossMargin: totalRevenue ? grossProfit / totalRevenue : 0,
+      recurringMix: totalRevenue ? consumablesRevenue / totalRevenue : 0,
+      opex: { teamExpense, salesMarketingExpense, rdExpense, gaExpense, supportExpense, validationExpense, operatingExpenses, smRate },
       operatingProfit,
-      cash: {
-        beginningCash,
-        cashChange: operatingProfit,
-        endingCash,
-      },
-      grossMargin,
-      operatingMargin,
-      subscriptionShare: totalRevenue === 0 ? 0 : subscriptionRevenue / totalRevenue,
-    };
+      beginningCash,
+      endingCash: cash,
+      tamPenetration: sourceModel.tam ? cDeviceUnits / sourceModel.tam : 0,
+    });
   });
+
+  return { rows, units, rawSpaceUnits, subscriptions, economics, scenarioName };
 }
 
 function syncInputs() {
-  inputs.tam.value = state.tam;
-  inputs.launchYearUnits.value = state.launchYearUnits;
-  inputs.price.value = state.price;
-  inputs.hardwareCogs.value = state.hardwareCogs;
-  inputs.subscriptionFee.value = state.subscriptionFee;
-  inputs.subscriptionCogs.value = state.subscriptionCogs;
-  inputs.penetrationScale.value = state.penetrationScale;
-  inputs.churnScale.value = state.churnScale;
-  inputs.teamHeadcount.value = state.teamHeadcount;
-  inputs.monthlySalaryRmb.value = state.monthlySalaryRmb;
-  inputs.monthlyRentRmb.value = state.monthlyRentRmb;
-  inputs.monthlySpendCapRmb.value = state.monthlySpendCapRmb;
-  inputs.usdCny.value = state.usdCny;
-  inputs.teamGrowth.value = state.teamGrowth;
-  inputs.salesMarketingStart.value = state.salesMarketingStart;
-  inputs.salesMarketingEnd.value = state.salesMarketingEnd;
-  inputs.rdPct.value = state.rdPct;
-  inputs.gaPct.value = state.gaPct;
-  inputs.supportCost.value = state.supportCost;
-  inputs.startingCash.value = state.startingCash;
-  document.getElementById("subscriptionCogsValue").textContent = `${state.subscriptionCogs}%`;
-  document.getElementById("penetrationScaleValue").textContent = `${state.penetrationScale}%`;
-  document.getElementById("churnScaleValue").textContent = `${state.churnScale}%`;
-  document.getElementById("teamGrowthValue").textContent = `${state.teamGrowth}%`;
-  document.getElementById("teamMonthlySpendValue").textContent = rmb(monthlyTeamSpendRmb(state));
-  document.getElementById("teamAnnualUsdValue").textContent = money(annualTeamCostUsd(state));
-  document.getElementById("salesMarketingStartValue").textContent = `${state.salesMarketingStart}%`;
-  document.getElementById("salesMarketingEndValue").textContent = `${state.salesMarketingEnd}%`;
-  document.getElementById("rdPctValue").textContent = `${state.rdPct}%`;
-  document.getElementById("gaPctValue").textContent = `${state.gaPct}%`;
-}
-
-function readInputs() {
-  state.tam = Number(inputs.tam.value) || 0;
-  state.launchYearUnits = Number(inputs.launchYearUnits.value) || 0;
-  state.price = Number(inputs.price.value) || 0;
-  state.hardwareCogs = Number(inputs.hardwareCogs.value) || 0;
-  state.subscriptionFee = Number(inputs.subscriptionFee.value) || 0;
-  state.subscriptionCogs = Number(inputs.subscriptionCogs.value) || 0;
-  state.penetrationScale = Number(inputs.penetrationScale.value) || 0;
-  state.churnScale = Number(inputs.churnScale.value) || 0;
-  state.teamHeadcount = Number(inputs.teamHeadcount.value) || 0;
-  state.monthlySalaryRmb = Number(inputs.monthlySalaryRmb.value) || 0;
-  state.monthlyRentRmb = Number(inputs.monthlyRentRmb.value) || 0;
-  state.monthlySpendCapRmb = Number(inputs.monthlySpendCapRmb.value) || 0;
-  state.usdCny = Number(inputs.usdCny.value) || 1;
-  state.teamGrowth = Number(inputs.teamGrowth.value) || 0;
-  state.salesMarketingStart = Number(inputs.salesMarketingStart.value) || 0;
-  state.salesMarketingEnd = Number(inputs.salesMarketingEnd.value) || 0;
-  state.rdPct = Number(inputs.rdPct.value) || 0;
-  state.gaPct = Number(inputs.gaPct.value) || 0;
-  state.supportCost = Number(inputs.supportCost.value) || 0;
-  state.startingCash = Number(inputs.startingCash.value) || 0;
-  syncInputs();
-  render();
-}
-
-function setScenario(name) {
-  const scenario = scenarioScales[name];
-  state = {
-    ...state,
-    penetrationScale: scenario.penetrationScale,
-    churnScale: scenario.churnScale,
-  };
-  document.querySelectorAll(".scenario-button").forEach((button) => {
-    button.classList.toggle("active", button.dataset.scenario === name);
+  Object.entries(inputBindings).forEach(([id, path]) => {
+    const element = document.getElementById(id);
+    if (element) element.value = getPath(model, path);
   });
-  syncInputs();
-  render();
+  document.getElementById("teamCostPreview").textContent = money(annualTeamCost(model));
 }
 
-function drawRevenueChart(rows) {
-  const svg = document.getElementById("revenueChart");
-  const width = 720;
-  const height = 320;
-  const margin = { top: 24, right: 28, bottom: 42, left: 58 };
-  const innerWidth = width - margin.left - margin.right;
-  const innerHeight = height - margin.top - margin.bottom;
-  const maxRevenue = Math.max(...rows.map((row) => row.totalRevenue), 1);
-  const barWidth = innerWidth / rows.length * 0.42;
-
-  const y = (value) => margin.top + innerHeight - (value / maxRevenue) * innerHeight;
-  const x = (index) => margin.left + index * (innerWidth / rows.length) + innerWidth / rows.length * 0.3;
-
-  svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
-  svg.innerHTML = "";
-
-  [0, 0.25, 0.5, 0.75, 1].forEach((tick) => {
-    const yy = margin.top + innerHeight - tick * innerHeight;
-    svg.insertAdjacentHTML("beforeend", `<line class="grid-line" x1="${margin.left}" y1="${yy}" x2="${width - margin.right}" y2="${yy}"></line>`);
-    svg.insertAdjacentHTML("beforeend", `<text class="chart-label" x="8" y="${yy + 4}">${money(maxRevenue * tick)}</text>`);
-  });
-
-  rows.forEach((row, index) => {
-    const xx = x(index);
-    const hardwareHeight = innerHeight - (y(row.hardwareRevenue) - margin.top);
-    const subscriptionHeight = innerHeight - (y(row.subscriptionRevenue) - margin.top);
-    const hardwareY = margin.top + innerHeight - hardwareHeight;
-    const subscriptionY = hardwareY - subscriptionHeight;
-    svg.insertAdjacentHTML("beforeend", `<rect class="subscription-bar" x="${xx}" y="${subscriptionY}" width="${barWidth}" height="${subscriptionHeight}"></rect>`);
-    svg.insertAdjacentHTML("beforeend", `<rect class="hardware-bar" x="${xx}" y="${hardwareY}" width="${barWidth}" height="${hardwareHeight}"></rect>`);
-    svg.insertAdjacentHTML("beforeend", `<text class="chart-label" x="${xx + barWidth / 2}" y="${height - 14}" text-anchor="middle">${row.year}</text>`);
-  });
-
-  svg.insertAdjacentHTML("beforeend", `<line class="axis" x1="${margin.left}" y1="${margin.top + innerHeight}" x2="${width - margin.right}" y2="${margin.top + innerHeight}"></line>`);
-  svg.insertAdjacentHTML("beforeend", `<rect class="hardware-bar" x="${width - 174}" y="16" width="10" height="10"></rect><text class="legend-text" x="${width - 158}" y="25">Hardware</text>`);
-  svg.insertAdjacentHTML("beforeend", `<rect class="subscription-bar" x="${width - 84}" y="16" width="10" height="10"></rect><text class="legend-text" x="${width - 68}" y="25">Subscription</text>`);
+function renderKpis(forecast) {
+  const launch = forecast.rows[1];
+  const scale = forecast.rows[2];
+  const terminal = forecast.rows[4];
+  document.getElementById("kpi2027Units").textContent = compactNumber(launch.totalUnits);
+  document.getElementById("kpi2027Revenue").textContent = money(launch.totalRevenue);
+  document.getElementById("kpi2027Recurring").textContent = `${percent(launch.recurringMix)} recurring`;
+  document.getElementById("kpi2028Units").textContent = compactNumber(scale.totalUnits);
+  document.getElementById("kpiRecurringMix").textContent = percent(terminal.recurringMix);
+  document.getElementById("kpiInstalledBase").textContent = `${compactNumber(terminal.installedBase)} installed C-devices`;
+  document.getElementById("kpiTamPenetration").textContent = percent(terminal.tamPenetration, 2);
 }
 
-function linePath(rows, key, maxValue, minValue, width, height, margin) {
-  const innerWidth = width - margin.left - margin.right;
-  const innerHeight = height - margin.top - margin.bottom;
-  const spread = Math.max(maxValue - minValue, 1);
-  return rows
-    .map((row, index) => {
-      const x = margin.left + index * (innerWidth / (rows.length - 1));
-      const y = margin.top + innerHeight - ((row[key] - minValue) / spread) * innerHeight;
-      return `${index === 0 ? "M" : "L"} ${x} ${y}`;
-    })
-    .join(" ");
+function renderExecutive(forecast) {
+  document.getElementById("executiveRows").innerHTML = forecast.rows.map((row) => `
+    <tr class="${row.year === 2026 ? "validation-row" : ""}">
+      <td><strong>${row.year}</strong></td>
+      <td><span class="stage-label">${row.stage}</span></td>
+      <td>${row.year === 2026 ? "Founder 100" : number(row.totalUnits)}</td>
+      <td>${money(row.hardwareRevenue)}</td>
+      <td>${money(row.consumablesRevenue)}</td>
+      <td><strong>${money(row.totalRevenue)}</strong></td>
+      <td>${money(row.grossProfit)}</td>
+      <td>${percent(row.recurringMix)}</td>
+      <td class="${row.endingCash < 0 ? "negative" : "positive"}">${money(row.endingCash)}</td>
+    </tr>`).join("");
+  const breakEven = forecast.rows.find((row) => row.year > 2026 && row.operatingProfit >= 0);
+  document.getElementById("breakEvenBadge").textContent = breakEven ? `Operating break-even · ${breakEven.year}` : "No break-even in forecast";
 }
 
-function drawProfitChart(rows) {
-  const svg = document.getElementById("profitChart");
-  const width = 720;
-  const height = 320;
-  const margin = { top: 24, right: 28, bottom: 42, left: 58 };
-  const innerHeight = height - margin.top - margin.bottom;
-  const values = rows.flatMap((row) => [row.grossProfit, row.operatingProfit]);
-  const maxValue = Math.max(...values, 1);
-  const minValue = Math.min(...values, 0);
-  const y = (value) => margin.top + innerHeight - ((value - minValue) / Math.max(maxValue - minValue, 1)) * innerHeight;
-
-  svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
-  svg.innerHTML = "";
-
-  [0, 0.25, 0.5, 0.75, 1].forEach((tick) => {
-    const value = minValue + (maxValue - minValue) * tick;
-    const yy = y(value);
-    svg.insertAdjacentHTML("beforeend", `<line class="grid-line" x1="${margin.left}" y1="${yy}" x2="${width - margin.right}" y2="${yy}"></line>`);
-    svg.insertAdjacentHTML("beforeend", `<text class="chart-label" x="8" y="${yy + 4}">${money(value)}</text>`);
-  });
-
-  rows.forEach((row, index) => {
-    const x = margin.left + index * ((width - margin.left - margin.right) / (rows.length - 1));
-    svg.insertAdjacentHTML("beforeend", `<text class="chart-label" x="${x}" y="${height - 14}" text-anchor="middle">${row.year}</text>`);
-  });
-
-  svg.insertAdjacentHTML("beforeend", `<path class="gross-line" d="${linePath(rows, "grossProfit", maxValue, minValue, width, height, margin)}"></path>`);
-  svg.insertAdjacentHTML("beforeend", `<path class="operating-line" d="${linePath(rows, "operatingProfit", maxValue, minValue, width, height, margin)}"></path>`);
-  rows.forEach((row, index) => {
-    const x = margin.left + index * ((width - margin.left - margin.right) / (rows.length - 1));
-    svg.insertAdjacentHTML("beforeend", `<circle cx="${x}" cy="${y(row.grossProfit)}" r="4" fill="#c07a12"></circle>`);
-    svg.insertAdjacentHTML("beforeend", `<circle cx="${x}" cy="${y(row.operatingProfit)}" r="4" fill="#7b61d8"></circle>`);
-  });
-  svg.insertAdjacentHTML("beforeend", `<rect x="${width - 202}" y="16" width="10" height="10" fill="#c07a12"></rect><text class="legend-text" x="${width - 186}" y="25">Gross Profit</text>`);
-  svg.insertAdjacentHTML("beforeend", `<rect x="${width - 96}" y="16" width="10" height="10" fill="#7b61d8"></rect><text class="legend-text" x="${width - 80}" y="25">Operating</text>`);
+function unitCell(product, index, displayedValue) {
+  if (index === 0) return product === "space" ? `${number(model.founderUnits)} validation` : product === "lab" ? "Engineering" : "Pilot";
+  if (product === "space") return `<strong>${number(displayedValue)}</strong><small>from GTM build-up</small>`;
+  const baseValue = model.units[product][index];
+  if (activeScenario === "base") {
+    return `<input class="table-input unit-input" type="number" min="0" step="500" data-product="${product}" data-year-index="${index}" value="${baseValue}" />`;
+  }
+  return `<strong>${number(displayedValue)}</strong><small>${number(baseValue)} base</small>`;
 }
 
-function renderTable(rows) {
-  document.getElementById("forecastRows").innerHTML = rows
-    .map((row) => {
-      const operatingClass = row.operatingProfit < 0 ? "negative" : "";
-      return `
-        <tr>
-          <td>${row.year}E</td>
-          <td>${number(row.units)}</td>
-          <td>${money(row.hardwareRevenue)}</td>
-          <td>${money(row.subscriptionRevenue)}</td>
-          <td>${money(row.totalRevenue)}</td>
-          <td>${money(row.grossProfit)}</td>
-          <td>${money(row.operatingExpenses)}</td>
-          <td class="${operatingClass}">${money(row.operatingProfit)}</td>
-          <td class="${operatingClass}">${percent(row.operatingMargin)}</td>
-          <td>${percent(row.grossMargin)}</td>
-        </tr>
-      `;
-    })
-    .join("");
+function renderProductModel(forecast) {
+  const productKeys = ["space", "lab", "y"];
+  document.getElementById("productRows").innerHTML = productKeys.map((key) => {
+    const product = model.products[key];
+    const terminal = forecast.rows[4].hardware[key];
+    const gm = terminal.revenue ? terminal.grossProfit / terminal.revenue : 0;
+    return `<tr><td><strong>${product.name}</strong><small>${key === "space" ? "Mass premium consumer" : key === "lab" ? "Health / longevity / biohacking" : "B2B platform"}</small></td>${years.map((_, index) => `<td>${unitCell(key, index, forecast.units[key][index])}</td>`).join("")}<td>$${number(product.asp)}</td><td>${percent(gm)}</td></tr>`;
+  }).join("");
+
+  const launch = forecast.rows[1];
+  const cHardware = launch.hardware.space.revenue + launch.hardware.lab.revenue;
+  const labShare = cHardware ? launch.hardware.lab.revenue / cHardware : 0;
+  document.getElementById("productCallouts").innerHTML = `
+    <article><span>2027 C-device hardware revenue</span><strong>${money(cHardware)}</strong></article>
+    <article><span>Lab share of C-device units</span><strong>${percent(launch.units.lab / Math.max(launch.cDeviceUnits, 1))}</strong></article>
+    <article><span>Lab share of C-device hardware revenue</span><strong>${percent(labShare)}</strong></article>
+    <article><span>2027 B2B hardware revenue</span><strong>${money(launch.hardware.y.revenue)}</strong></article>`;
 }
 
-function renderOpexTable(rows) {
-  document.getElementById("opexRows").innerHTML = rows
-    .map((row) => {
-      return `
-        <tr>
-          <td>${row.year}E</td>
-          <td>${money(row.opex.teamExpense)}</td>
-          <td>${money(row.opex.salesMarketingExpense)}</td>
-          <td>${money(row.opex.rdExpense)}</td>
-          <td>${money(row.opex.gaExpense)}</td>
-          <td>${money(row.opex.supportExpense)}</td>
-          <td>${money(row.operatingExpenses)}</td>
-          <td>${percent(row.opex.salesMarketingRate)}</td>
-        </tr>
-      `;
-    })
-    .join("");
+function renderWaterfall(forecast) {
+  const launch = forecast.rows[1];
+  const components = [
+    { label: "Space Hardware", value: launch.hardware.space.revenue, color: "blue" },
+    { label: "Lab Hardware", value: launch.hardware.lab.revenue, color: "violet" },
+    { label: "Luya Y / B2B", value: launch.hardware.y.revenue, color: "amber" },
+    { label: "Consumables", value: launch.consumablesRevenue, color: "green" },
+  ];
+  const max = Math.max(...components.map((item) => item.value), 1);
+  document.getElementById("waterfallTotal").textContent = `Total ${money(launch.totalRevenue)}`;
+  document.getElementById("waterfallBars").innerHTML = components.map((item) => `
+    <article><div class="waterfall-label"><span>${item.label}</span><strong>${money(item.value)}</strong></div><div class="bar-track"><div class="bar-fill ${item.color}" style="width:${item.value / max * 100}%"></div></div></article>`).join("") +
+    `<article class="waterfall-total"><div class="waterfall-label"><span>Total 2027 Revenue</span><strong>${money(launch.totalRevenue)}</strong></div></article>`;
 }
 
-function renderCashTable(rows) {
-  document.getElementById("cashRows").innerHTML = rows
-    .map((row) => {
-      const cashClass = row.cash.endingCash < 0 ? "negative" : "";
-      const status = row.cash.endingCash < 0 ? "Funding needed" : row.cash.cashChange < 0 ? "Using cash" : "Cash building";
-      return `
-        <tr>
-          <td>${row.year}E</td>
-          <td>${money(row.cash.beginningCash)}</td>
-          <td class="${row.cash.cashChange < 0 ? "negative" : ""}">${money(row.cash.cashChange)}</td>
-          <td class="${cashClass}">${money(row.cash.endingCash)}</td>
-          <td class="${cashClass}">${status}</td>
-        </tr>
-      `;
-    })
-    .join("");
+function renderConsumables(forecast) {
+  const summary = ["space", "lab"].map((key) => {
+    const subscription = forecast.subscriptions[key];
+    const plan = forecast.economics[key];
+    const original = model.subscriptions[key];
+    return `<article><div><span>${model.products[key].name}</span><strong>${money(plan.annualRevenue, 0)} blended annual plan</strong></div><dl><dt>Attach</dt><dd>${percent(subscription.attach)}</dd><dt>Plan mix</dt><dd>${original.standardMix}% Standard / ${100 - original.standardMix}% Power</dd><dt>Retention</dt><dd>${percent(subscription.ret3, 0)} · ${percent(subscription.ret6, 0)} · ${percent(subscription.ret12, 0)}</dd></dl></article>`;
+  }).join("");
+  document.getElementById("subscriptionSummary").innerHTML = summary;
+  document.getElementById("cohortRows").innerHTML = forecast.rows.map((row) => `
+    <tr><td><strong>${row.year}</strong></td><td>${row.year === 2026 ? "—" : number(row.cDeviceUnits)}</td><td>${number(row.installedBase)}</td><td>${number(row.activeSubscribers)}</td><td><strong>${money(row.consumablesRevenue)}</strong></td><td>${percent(row.recurringMix)}</td></tr>`).join("");
+}
+
+function renderGtm(forecast) {
+  document.getElementById("gtmRows").innerHTML = Object.entries(model.gtm).map(([key, channel]) => `
+    <tr><td><strong>${channel.label}</strong></td>${years.map((_, index) => `<td>${index === 0 && key !== "founder" ? "—" : `<input class="table-input gtm-input" type="number" min="0" step="500" data-channel="${key}" data-year-index="${index}" value="${index === 0 && key === "founder" ? model.founderUnits : channel.values[index]}" ${index === 0 ? "disabled" : ""} />`}</td>`).join("")}</tr>`).join("");
+  document.getElementById("gtmFooter").innerHTML = `<tr><th>Base channel total</th>${forecast.rawSpaceUnits.map((value) => `<th>${number(value)}</th>`).join("")}</tr>${activeScenario === "base" ? "" : `<tr><th>${scenarioConfig[activeScenario].label} adjusted units</th>${forecast.units.space.map((value) => `<th>${number(value)}</th>`).join("")}</tr>`}`;
+}
+
+function renderInvestorView(forecast) {
+  const terminal = forecast.rows[4];
+  const lowestCash = forecast.rows.reduce((lowest, row) => row.endingCash < lowest.endingCash ? row : lowest, forecast.rows[0]);
+  const fundingNeed = Math.max(0, -lowestCash.endingCash);
+  const breakEven = forecast.rows.find((row) => row.year > 2026 && row.operatingProfit >= 0);
+  document.getElementById("investorTam").textContent = percent(terminal.tamPenetration, 2);
+  document.getElementById("investorInstalled").textContent = compactNumber(terminal.installedBase);
+  document.getElementById("investorFunding").textContent = money(fundingNeed);
+  document.getElementById("investorFundingYear").textContent = fundingNeed ? `Peak gap in ${lowestCash.year}` : "No funding gap in forecast";
+  document.getElementById("investorBreakEven").textContent = breakEven ? breakEven.year : "Beyond 2030";
+
+  document.getElementById("scenarioComparison").innerHTML = ["bear", "base", "bull"].map((name) => {
+    const result = calculateForecast(model, name);
+    const end = result.rows[4];
+    const low = result.rows.reduce((lowest, row) => row.endingCash < lowest.endingCash ? row : lowest, result.rows[0]);
+    return `<article class="${name === activeScenario ? "active" : ""}"><span>${scenarioConfig[name].label}</span><strong>${money(end.totalRevenue)}</strong><small>2030 revenue</small><dl><dt>Recurring</dt><dd>${percent(end.recurringMix)}</dd><dt>2030 units</dt><dd>${compactNumber(end.totalUnits)}</dd><dt>Funding need</dt><dd>${money(Math.max(0, -low.endingCash))}</dd></dl></article>`;
+  }).join("");
 }
 
 function render() {
-  const rows = calculateModel(state);
-  const finalYear = rows.at(-1);
-  const lowestCashYear = rows.reduce((lowest, row) => (row.cash.endingCash < lowest.cash.endingCash ? row : lowest), rows[0]);
-  const baseRows = calculateModel(baseAssumptions);
-  const baseRevenue = baseRows.at(-1).totalRevenue;
-  const revenueDelta = baseRevenue === 0 ? 0 : finalYear.totalRevenue / baseRevenue - 1;
-
-  document.getElementById("metricRevenue").textContent = money(finalYear.totalRevenue);
-  document.getElementById("metricRevenueDelta").textContent = `${revenueDelta >= 0 ? "+" : ""}${percent(revenueDelta)} vs. base`;
-  document.getElementById("metricGrossProfit").textContent = money(finalYear.grossProfit);
-  document.getElementById("metricGrossMargin").textContent = `${percent(finalYear.grossMargin)} gross margin`;
-  document.getElementById("metricOperatingProfit").textContent = money(finalYear.operatingProfit);
-  document.getElementById("metricOperatingMargin").textContent = `${percent(finalYear.operatingMargin)} operating margin`;
-  document.getElementById("metricSubscribers").textContent = number(finalYear.endingSubscribers);
-  document.getElementById("metricSubscriptionShare").textContent = `${percent(finalYear.subscriptionShare)} subscription revenue`;
-  document.getElementById("metricCash").textContent = money(finalYear.cash.endingCash);
-  document.getElementById("metricCash").classList.toggle("negative", finalYear.cash.endingCash < 0);
-  document.getElementById("metricCashStatus").textContent =
-    lowestCashYear.cash.endingCash < 0
-      ? `Lowest cash: ${money(lowestCashYear.cash.endingCash)} in ${lowestCashYear.year}`
-      : "Cash positive every year";
-  document.getElementById("revenuePeakLabel").textContent = `${money(finalYear.totalRevenue)} in ${finalYear.year}`;
-  document.getElementById("marginLabel").textContent = `${percent(finalYear.grossMargin)} gross margin`;
-
-  drawRevenueChart(rows);
-  drawProfitChart(rows);
-  renderTable(rows);
-  renderOpexTable(rows);
-  renderCashTable(rows);
+  const forecast = calculateForecast(model);
+  renderKpis(forecast);
+  renderExecutive(forecast);
+  renderProductModel(forecast);
+  renderWaterfall(forecast);
+  renderConsumables(forecast);
+  renderGtm(forecast);
+  renderInvestorView(forecast);
+  document.getElementById("teamCostPreview").textContent = money(annualTeamCost(model));
+  document.querySelectorAll("[data-scenario]").forEach((button) => button.classList.toggle("active", button.dataset.scenario === activeScenario));
 }
 
-Object.values(inputs).forEach((input) => input.addEventListener("input", readInputs));
-document.getElementById("resetButton").addEventListener("click", () => {
-  state = { ...baseAssumptions };
-  document.querySelectorAll(".scenario-button").forEach((button) => {
-    button.classList.toggle("active", button.dataset.scenario === "base");
+Object.entries(inputBindings).forEach(([id, path]) => {
+  document.getElementById(id)?.addEventListener("input", (event) => {
+    setPath(model, path, Number(event.target.value) || 0);
+    render();
   });
+});
+
+document.addEventListener("input", (event) => {
+  if (event.target.matches(".unit-input")) {
+    model.units[event.target.dataset.product][Number(event.target.dataset.yearIndex)] = Number(event.target.value) || 0;
+    render();
+  }
+  if (event.target.matches(".gtm-input")) {
+    model.gtm[event.target.dataset.channel].values[Number(event.target.dataset.yearIndex)] = Number(event.target.value) || 0;
+    render();
+  }
+});
+
+document.querySelectorAll("[data-scenario]").forEach((button) => {
+  button.addEventListener("click", () => {
+    activeScenario = button.dataset.scenario;
+    render();
+  });
+});
+
+document.getElementById("resetButton").addEventListener("click", () => {
+  model = structuredClone(defaultModel);
+  activeScenario = "base";
   syncInputs();
   render();
-});
-document.querySelectorAll(".scenario-button").forEach((button) => {
-  button.addEventListener("click", () => setScenario(button.dataset.scenario));
 });
 
 syncInputs();
