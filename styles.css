@@ -62,11 +62,12 @@ button { cursor: pointer; }
 h1, h2, h3, p { letter-spacing: 0; }
 h1 { margin: 0; font-size: clamp(34px, 5vw, 60px); line-height: 0.98; }
 h2 { margin: 0; font-size: 18px; }
+.title-cn { color: var(--blue); font-size: .48em; font-weight: 750; white-space: nowrap; }
 .subtitle { margin: 10px 0 0; color: var(--muted); }
 
 .scenario-control {
   display: grid;
-  grid-template-columns: repeat(3, 92px);
+  grid-template-columns: repeat(3, 112px);
   gap: 4px;
   padding: 4px;
   border: 1px solid var(--line);
@@ -93,7 +94,7 @@ h2 { margin: 0; font-size: 18px; }
 
 .kpi {
   position: relative;
-  min-height: 126px;
+  min-height: 150px;
   overflow: hidden;
   padding: 17px;
   border: 1px solid var(--line);
@@ -105,6 +106,7 @@ h2 { margin: 0; font-size: 18px; }
 .kpi span, .kpi small { display: block; color: var(--muted); }
 .kpi span { font-size: 12px; font-weight: 800; text-transform: uppercase; }
 .kpi strong { display: block; margin: 14px 0 7px; font-size: clamp(24px, 2.3vw, 34px); line-height: 1; }
+.kpi strong em { display: block; margin-top: 6px; font-size: .72em; font-style: normal; }
 .kpi small { font-size: 12px; line-height: 1.35; }
 .kpi-validation { background: linear-gradient(180deg, var(--coral-soft), #fff 68%); }
 .kpi-validation::before { background: var(--coral); }
@@ -117,7 +119,7 @@ h2 { margin: 0; font-size: 18px; }
 
 .model-layout {
   display: grid;
-  grid-template-columns: 330px minmax(0, 1fr);
+  grid-template-columns: 360px minmax(0, 1fr);
   gap: 12px;
   align-items: start;
   min-width: 0;
@@ -146,12 +148,14 @@ h2 { margin: 0; font-size: 18px; }
 
 .panel-title { margin-bottom: 12px; }
 .reset-button {
+  flex: 0 0 auto;
   height: 34px;
   padding: 0 12px;
   border: 1px solid #f0c7bf;
   background: var(--coral-soft);
   color: #a44030;
   font-weight: 800;
+  white-space: nowrap;
 }
 
 details { border-top: 1px solid var(--line); }
@@ -282,6 +286,7 @@ tfoot th { border-top: 2px solid var(--ink); background: #eef4fc; }
 @media (max-width: 680px) {
   .app-shell { padding: 14px; }
   .topbar { align-items: stretch; flex-direction: column; }
+  .title-cn { display: block; margin-top: 8px; }
   .scenario-control { grid-template-columns: repeat(3, 1fr); }
   .kpi-grid, .validation-grid, .product-callouts, .subscription-summary, .investor-grid, .scenario-comparison, .stage-timeline { grid-template-columns: 1fr; }
   .module-heading { align-items: flex-start; flex-direction: column; }

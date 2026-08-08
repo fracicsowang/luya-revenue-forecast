@@ -1,5 +1,5 @@
 const years = [2026, 2027, 2028, 2029, 2030];
-const stages = ["Validate", "Prove PMF", "Scale", "Expand", "Expand"];
+const stages = ["Validate / 验证", "Prove PMF / 验证PMF", "Scale / 规模化", "Expand / 扩张", "Expand / 扩张"];
 
 const defaultModel = {
   tam: 30000000,
@@ -16,12 +16,12 @@ const defaultModel = {
     y: [0, 1000, 2500, 5000, 8000],
   },
   gtm: {
-    founder: { label: "Founder / Waitlist / Organic", values: [100, 2000, 4000, 7000, 10000] },
-    kol: { label: "KOL / KOC / Affiliate", values: [0, 4000, 12000, 25000, 40000] },
-    paid: { label: "Meta / Google / Performance", values: [0, 4000, 14000, 32000, 60000] },
-    amazon: { label: "Amazon / Marketplace", values: [0, 2000, 7000, 18000, 35000] },
-    organic: { label: "PR / Organic / Referral", values: [0, 1500, 4000, 8000, 14000] },
-    retail: { label: "Retail / Distributor / Other", values: [0, 1500, 4000, 10000, 21000] },
+    founder: { label: "Founder / Waitlist / Organic / 创始用户、候补名单与自然流量", values: [100, 2000, 4000, 7000, 10000] },
+    kol: { label: "KOL / KOC / Affiliate / 达人、口碑与联盟", values: [0, 4000, 12000, 25000, 40000] },
+    paid: { label: "Meta / Google / Performance / 绩效广告", values: [0, 4000, 14000, 32000, 60000] },
+    amazon: { label: "Amazon / Marketplace / 亚马逊与电商平台", values: [0, 2000, 7000, 18000, 35000] },
+    organic: { label: "PR / Organic / Referral / 公关、自然流量与推荐", values: [0, 1500, 4000, 8000, 14000] },
+    retail: { label: "Retail / Distributor / Other / 零售、经销与其他", values: [0, 1500, 4000, 10000, 21000] },
   },
   plans: {
     standard: { price: 29, cogs: 9, trays: 8 },
@@ -46,9 +46,9 @@ const defaultModel = {
 };
 
 const scenarioConfig = {
-  bear: { label: "Bear", unitScale: 0.75, attachDelta: -8, retentionDelta: -5, cogsScale: 1.05, smDelta: 4 },
-  base: { label: "Base", unitScale: 1, attachDelta: 0, retentionDelta: 0, cogsScale: 1, smDelta: 0 },
-  bull: { label: "Bull", unitScale: 1.25, attachDelta: 5, retentionDelta: 3, cogsScale: 0.97, smDelta: -2 },
+  bear: { label: "Bear / 保守", unitScale: 0.75, attachDelta: -8, retentionDelta: -5, cogsScale: 1.05, smDelta: 4 },
+  base: { label: "Base / 基准", unitScale: 1, attachDelta: 0, retentionDelta: 0, cogsScale: 1, smDelta: 0 },
+  bull: { label: "Bull / 乐观", unitScale: 1.25, attachDelta: 5, retentionDelta: 3, cogsScale: 0.97, smDelta: -2 },
 };
 
 let model = structuredClone(defaultModel);
@@ -281,10 +281,10 @@ function renderKpis(forecast) {
   const terminal = forecast.rows[4];
   document.getElementById("kpi2027Units").textContent = compactNumber(launch.totalUnits);
   document.getElementById("kpi2027Revenue").textContent = money(launch.totalRevenue);
-  document.getElementById("kpi2027Recurring").textContent = `${percent(launch.recurringMix)} recurring`;
+  document.getElementById("kpi2027Recurring").textContent = `${percent(launch.recurringMix)} recurring / 持续收入`;
   document.getElementById("kpi2028Units").textContent = compactNumber(scale.totalUnits);
   document.getElementById("kpiRecurringMix").textContent = percent(terminal.recurringMix);
-  document.getElementById("kpiInstalledBase").textContent = `${compactNumber(terminal.installedBase)} installed C-devices`;
+  document.getElementById("kpiInstalledBase").textContent = `${compactNumber(terminal.installedBase)} installed C-devices / C端累计装机`;
   document.getElementById("kpiTamPenetration").textContent = percent(terminal.tamPenetration, 2);
 }
 
@@ -293,7 +293,7 @@ function renderExecutive(forecast) {
     <tr class="${row.year === 2026 ? "validation-row" : ""}">
       <td><strong>${row.year}</strong></td>
       <td><span class="stage-label">${row.stage}</span></td>
-      <td>${row.year === 2026 ? "Founder 100" : number(row.totalUnits)}</td>
+      <td>${row.year === 2026 ? "Founder 100 / 创始用户验证" : number(row.totalUnits)}</td>
       <td>${money(row.hardwareRevenue)}</td>
       <td>${money(row.consumablesRevenue)}</td>
       <td><strong>${money(row.totalRevenue)}</strong></td>
@@ -302,17 +302,17 @@ function renderExecutive(forecast) {
       <td class="${row.endingCash < 0 ? "negative" : "positive"}">${money(row.endingCash)}</td>
     </tr>`).join("");
   const breakEven = forecast.rows.find((row) => row.year > 2026 && row.operatingProfit >= 0);
-  document.getElementById("breakEvenBadge").textContent = breakEven ? `Operating break-even · ${breakEven.year}` : "No break-even in forecast";
+  document.getElementById("breakEvenBadge").textContent = breakEven ? `Operating break-even / 经营盈亏平衡 · ${breakEven.year}` : "No break-even in forecast / 预测期内未盈亏平衡";
 }
 
 function unitCell(product, index, displayedValue) {
-  if (index === 0) return product === "space" ? `${number(model.founderUnits)} validation` : product === "lab" ? "Engineering" : "Pilot";
-  if (product === "space") return `<strong>${number(displayedValue)}</strong><small>from GTM build-up</small>`;
+  if (index === 0) return product === "space" ? `${number(model.founderUnits)} validation / 验证` : product === "lab" ? "Engineering / 工程验证" : "Pilot / 试点";
+  if (product === "space") return `<strong>${number(displayedValue)}</strong><small>from GTM build-up / 来自渠道加总</small>`;
   const baseValue = model.units[product][index];
   if (activeScenario === "base") {
     return `<input class="table-input unit-input" type="number" min="0" step="500" data-product="${product}" data-year-index="${index}" value="${baseValue}" />`;
   }
-  return `<strong>${number(displayedValue)}</strong><small>${number(baseValue)} base</small>`;
+  return `<strong>${number(displayedValue)}</strong><small>${number(baseValue)} base / 基准</small>`;
 }
 
 function renderProductModel(forecast) {
@@ -321,32 +321,32 @@ function renderProductModel(forecast) {
     const product = model.products[key];
     const terminal = forecast.rows[4].hardware[key];
     const gm = terminal.revenue ? terminal.grossProfit / terminal.revenue : 0;
-    return `<tr><td><strong>${product.name}</strong><small>${key === "space" ? "Mass premium consumer" : key === "lab" ? "Health / longevity / biohacking" : "B2B platform"}</small></td>${years.map((_, index) => `<td>${unitCell(key, index, forecast.units[key][index])}</td>`).join("")}<td>$${number(product.asp)}</td><td>${percent(gm)}</td></tr>`;
+    return `<tr><td><strong>${product.name}</strong><small>${key === "space" ? "Mass premium consumer / 高端大众消费" : key === "lab" ? "Health / longevity / biohacking / 健康、长寿与生物黑客" : "B2B platform / B端平台"}</small></td>${years.map((_, index) => `<td>${unitCell(key, index, forecast.units[key][index])}</td>`).join("")}<td>$${number(product.asp)}</td><td>${percent(gm)}</td></tr>`;
   }).join("");
 
   const launch = forecast.rows[1];
   const cHardware = launch.hardware.space.revenue + launch.hardware.lab.revenue;
   const labShare = cHardware ? launch.hardware.lab.revenue / cHardware : 0;
   document.getElementById("productCallouts").innerHTML = `
-    <article><span>2027 C-device hardware revenue</span><strong>${money(cHardware)}</strong></article>
-    <article><span>Lab share of C-device units</span><strong>${percent(launch.units.lab / Math.max(launch.cDeviceUnits, 1))}</strong></article>
-    <article><span>Lab share of C-device hardware revenue</span><strong>${percent(labShare)}</strong></article>
-    <article><span>2027 B2B hardware revenue</span><strong>${money(launch.hardware.y.revenue)}</strong></article>`;
+    <article><span>2027 C-device hardware revenue / C端硬件收入</span><strong>${money(cHardware)}</strong></article>
+    <article><span>Lab share of C-device units / Lab占C端销量</span><strong>${percent(launch.units.lab / Math.max(launch.cDeviceUnits, 1))}</strong></article>
+    <article><span>Lab share of C-device hardware revenue / Lab占C端硬件收入</span><strong>${percent(labShare)}</strong></article>
+    <article><span>2027 B2B hardware revenue / B端硬件收入</span><strong>${money(launch.hardware.y.revenue)}</strong></article>`;
 }
 
 function renderWaterfall(forecast) {
   const launch = forecast.rows[1];
   const components = [
-    { label: "Space Hardware", value: launch.hardware.space.revenue, color: "blue" },
-    { label: "Lab Hardware", value: launch.hardware.lab.revenue, color: "violet" },
-    { label: "Luya Y / B2B", value: launch.hardware.y.revenue, color: "amber" },
-    { label: "Consumables", value: launch.consumablesRevenue, color: "green" },
+    { label: "Space Hardware / 硬件", value: launch.hardware.space.revenue, color: "blue" },
+    { label: "Lab Hardware / 硬件", value: launch.hardware.lab.revenue, color: "violet" },
+    { label: "Luya Y / B2B / B端", value: launch.hardware.y.revenue, color: "amber" },
+    { label: "Consumables / 耗材", value: launch.consumablesRevenue, color: "green" },
   ];
   const max = Math.max(...components.map((item) => item.value), 1);
-  document.getElementById("waterfallTotal").textContent = `Total ${money(launch.totalRevenue)}`;
+  document.getElementById("waterfallTotal").textContent = `Total / 合计 ${money(launch.totalRevenue)}`;
   document.getElementById("waterfallBars").innerHTML = components.map((item) => `
     <article><div class="waterfall-label"><span>${item.label}</span><strong>${money(item.value)}</strong></div><div class="bar-track"><div class="bar-fill ${item.color}" style="width:${item.value / max * 100}%"></div></div></article>`).join("") +
-    `<article class="waterfall-total"><div class="waterfall-label"><span>Total 2027 Revenue</span><strong>${money(launch.totalRevenue)}</strong></div></article>`;
+    `<article class="waterfall-total"><div class="waterfall-label"><span>Total 2027 Revenue / 2027年总营收</span><strong>${money(launch.totalRevenue)}</strong></div></article>`;
 }
 
 function renderConsumables(forecast) {
@@ -354,7 +354,7 @@ function renderConsumables(forecast) {
     const subscription = forecast.subscriptions[key];
     const plan = forecast.economics[key];
     const original = model.subscriptions[key];
-    return `<article><div><span>${model.products[key].name}</span><strong>${money(plan.annualRevenue, 0)} blended annual plan</strong></div><dl><dt>Attach</dt><dd>${percent(subscription.attach)}</dd><dt>Plan mix</dt><dd>${original.standardMix}% Standard / ${100 - original.standardMix}% Power</dd><dt>Retention</dt><dd>${percent(subscription.ret3, 0)} · ${percent(subscription.ret6, 0)} · ${percent(subscription.ret12, 0)}</dd></dl></article>`;
+    return `<article><div><span>${model.products[key].name}</span><strong>${money(plan.annualRevenue, 0)} blended annual plan / 加权年费</strong></div><dl><dt>Attach / 加入率</dt><dd>${percent(subscription.attach)}</dd><dt>Plan mix / 套餐组合</dt><dd>${original.standardMix}% Standard / 标准 · ${100 - original.standardMix}% Power / 家庭</dd><dt>Retention / 留存率</dt><dd>${percent(subscription.ret3, 0)} · ${percent(subscription.ret6, 0)} · ${percent(subscription.ret12, 0)}</dd></dl></article>`;
   }).join("");
   document.getElementById("subscriptionSummary").innerHTML = summary;
   document.getElementById("cohortRows").innerHTML = forecast.rows.map((row) => `
@@ -364,7 +364,7 @@ function renderConsumables(forecast) {
 function renderGtm(forecast) {
   document.getElementById("gtmRows").innerHTML = Object.entries(model.gtm).map(([key, channel]) => `
     <tr><td><strong>${channel.label}</strong></td>${years.map((_, index) => `<td>${index === 0 && key !== "founder" ? "—" : `<input class="table-input gtm-input" type="number" min="0" step="500" data-channel="${key}" data-year-index="${index}" value="${index === 0 && key === "founder" ? model.founderUnits : channel.values[index]}" ${index === 0 ? "disabled" : ""} />`}</td>`).join("")}</tr>`).join("");
-  document.getElementById("gtmFooter").innerHTML = `<tr><th>Base channel total</th>${forecast.rawSpaceUnits.map((value) => `<th>${number(value)}</th>`).join("")}</tr>${activeScenario === "base" ? "" : `<tr><th>${scenarioConfig[activeScenario].label} adjusted units</th>${forecast.units.space.map((value) => `<th>${number(value)}</th>`).join("")}</tr>`}`;
+  document.getElementById("gtmFooter").innerHTML = `<tr><th>Base channel total / 基准渠道合计</th>${forecast.rawSpaceUnits.map((value) => `<th>${number(value)}</th>`).join("")}</tr>${activeScenario === "base" ? "" : `<tr><th>${scenarioConfig[activeScenario].label} adjusted units / 调整后销量</th>${forecast.units.space.map((value) => `<th>${number(value)}</th>`).join("")}</tr>`}`;
 }
 
 function renderInvestorView(forecast) {
@@ -375,14 +375,14 @@ function renderInvestorView(forecast) {
   document.getElementById("investorTam").textContent = percent(terminal.tamPenetration, 2);
   document.getElementById("investorInstalled").textContent = compactNumber(terminal.installedBase);
   document.getElementById("investorFunding").textContent = money(fundingNeed);
-  document.getElementById("investorFundingYear").textContent = fundingNeed ? `Peak gap in ${lowestCash.year}` : "No funding gap in forecast";
-  document.getElementById("investorBreakEven").textContent = breakEven ? breakEven.year : "Beyond 2030";
+  document.getElementById("investorFundingYear").textContent = fundingNeed ? `Peak gap in / 最大缺口年份 ${lowestCash.year}` : "No funding gap in forecast / 预测期内无资金缺口";
+  document.getElementById("investorBreakEven").textContent = breakEven ? breakEven.year : "Beyond 2030 / 2030年以后";
 
   document.getElementById("scenarioComparison").innerHTML = ["bear", "base", "bull"].map((name) => {
     const result = calculateForecast(model, name);
     const end = result.rows[4];
     const low = result.rows.reduce((lowest, row) => row.endingCash < lowest.endingCash ? row : lowest, result.rows[0]);
-    return `<article class="${name === activeScenario ? "active" : ""}"><span>${scenarioConfig[name].label}</span><strong>${money(end.totalRevenue)}</strong><small>2030 revenue</small><dl><dt>Recurring</dt><dd>${percent(end.recurringMix)}</dd><dt>2030 units</dt><dd>${compactNumber(end.totalUnits)}</dd><dt>Funding need</dt><dd>${money(Math.max(0, -low.endingCash))}</dd></dl></article>`;
+    return `<article class="${name === activeScenario ? "active" : ""}"><span>${scenarioConfig[name].label}</span><strong>${money(end.totalRevenue)}</strong><small>2030 revenue / 2030营收</small><dl><dt>Recurring / 持续收入</dt><dd>${percent(end.recurringMix)}</dd><dt>2030 units / 销量</dt><dd>${compactNumber(end.totalUnits)}</dd><dt>Funding need / 融资需求</dt><dd>${money(Math.max(0, -low.endingCash))}</dd></dl></article>`;
   }).join("");
 }
 

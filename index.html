@@ -3,55 +3,55 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="LUYA 2026-2030 bottom-up product, consumables, and go-to-market forecast." />
-    <title>LUYA 5-Year Growth Model</title>
-    <link rel="stylesheet" href="styles.css?v=bottom-up-2030" />
+    <meta name="description" content="LUYA 2026-2030 bottom-up product, consumables, and go-to-market forecast / 自下而上的产品、耗材与渠道预测模型。" />
+    <title>LUYA 5-Year Growth Model / 五年增长模型</title>
+    <link rel="stylesheet" href="styles.css?v=bilingual-2030" />
   </head>
   <body>
     <main class="app-shell">
       <header class="topbar">
         <div>
-          <p class="eyebrow">LUYA Investor Model · 2026–2030</p>
-          <h1>5-Year Growth Model</h1>
-          <p class="subtitle">Product lines, channel build-up, installed base, and recurring consumables.</p>
+          <p class="eyebrow">LUYA Investor Model / 投资人模型 · 2026–2030</p>
+          <h1>5-Year Growth Model <span class="title-cn">五年增长模型</span></h1>
+          <p class="subtitle">Product lines, channel build-up, installed base, and recurring consumables. / 产品线、渠道构成、装机量与持续耗材收入。</p>
         </div>
         <div class="scenario-control" role="group" aria-label="Forecast scenario">
-          <button type="button" data-scenario="bear">Bear</button>
-          <button type="button" class="active" data-scenario="base">Base</button>
-          <button type="button" data-scenario="bull">Bull</button>
+          <button type="button" data-scenario="bear">Bear / 保守</button>
+          <button type="button" class="active" data-scenario="base">Base / 基准</button>
+          <button type="button" data-scenario="bull">Bull / 乐观</button>
         </div>
       </header>
 
       <section class="kpi-grid" aria-label="Executive forecast">
         <article class="kpi kpi-validation">
           <span>2026</span>
-          <strong>Validation Year</strong>
-          <small>Founder 100 · no commercial revenue</small>
+          <strong>Validation Year <em>验证年</em></strong>
+          <small>Founder 100 · no commercial revenue / 不计商业收入</small>
         </article>
         <article class="kpi kpi-blue">
-          <span>2027 Launch Units</span>
+          <span>2027 Launch Units / 商业化销量</span>
           <strong id="kpi2027Units">0</strong>
-          <small>Space + Lab + Luya Y</small>
+          <small>Space + Lab + Luya Y / 三条产品线</small>
         </article>
         <article class="kpi kpi-green">
-          <span>2027 Revenue</span>
+          <span>2027 Revenue / 营收</span>
           <strong id="kpi2027Revenue">$0</strong>
           <small id="kpi2027Recurring">0% recurring</small>
         </article>
         <article class="kpi kpi-amber">
-          <span>2028 Scale Units</span>
+          <span>2028 Scale Units / 规模化销量</span>
           <strong id="kpi2028Units">0</strong>
-          <small>Early scale-up year</small>
+          <small>Early scale-up year / 初步放量</small>
         </article>
         <article class="kpi kpi-violet">
-          <span>2030 Recurring Mix</span>
+          <span>2030 Recurring Mix / 持续收入占比</span>
           <strong id="kpiRecurringMix">0%</strong>
           <small id="kpiInstalledBase">0 installed C-devices</small>
         </article>
         <article class="kpi kpi-coral">
-          <span>2030 TAM Check</span>
+          <span>2030 TAM Check / 市场空间校验</span>
           <strong id="kpiTamPenetration">0%</strong>
-          <small>Annual C-device units / 30M households</small>
+          <small>Annual C-device units / 30M households / 年销量除以目标家庭数</small>
         </article>
       </section>
 
@@ -59,136 +59,136 @@
         <aside class="assumptions" aria-label="Model assumptions">
           <div class="panel-title">
             <div>
-              <p class="section-kicker">Model Inputs</p>
-              <h2>Assumptions</h2>
+              <p class="section-kicker">Model Inputs / 模型输入</p>
+              <h2>Assumptions / 核心假设</h2>
             </div>
-            <button type="button" class="reset-button" id="resetButton">Reset</button>
+            <button type="button" class="reset-button" id="resetButton">Reset / 重置</button>
           </div>
 
           <details open>
-            <summary>Core & Cash</summary>
-            <label class="field"><span>TAM households</span><input id="tam" type="number" min="1000000" step="1000000" /></label>
-            <label class="field"><span>Initial free cash ($)</span><input id="startingCash" type="number" min="0" step="100000" /></label>
-            <label class="field"><span>Founder 100 units</span><input id="founderUnits" type="number" min="0" step="10" /></label>
-            <label class="field"><span>Validation program spend ($)</span><input id="validationSpend" type="number" min="0" step="25000" /></label>
+            <summary>Core & Cash / 核心与现金</summary>
+            <label class="field"><span>TAM households / 目标家庭数</span><input id="tam" type="number" min="1000000" step="1000000" /></label>
+            <label class="field"><span>Initial free cash / 初始自由资金 ($)</span><input id="startingCash" type="number" min="0" step="100000" /></label>
+            <label class="field"><span>Founder 100 units / 验证设备</span><input id="founderUnits" type="number" min="0" step="10" /></label>
+            <label class="field"><span>Validation spend / 验证投入 ($)</span><input id="validationSpend" type="number" min="0" step="25000" /></label>
           </details>
 
           <details open>
-            <summary>Product Economics</summary>
-            <div class="mini-grid headings"><span>Product</span><span>ASP</span><span>COGS</span></div>
+            <summary>Product Economics / 产品经济模型</summary>
+            <div class="mini-grid headings"><span>Product / 产品</span><span>ASP / 售价</span><span>COGS / 成本</span></div>
             <div class="mini-grid"><strong>X1 Space</strong><input id="spaceAsp" aria-label="X1 Space ASP" type="number" min="0" step="10" /><input id="spaceCogs" aria-label="X1 Space COGS" type="number" min="0" step="10" /></div>
             <div class="mini-grid"><strong>X1 Lab</strong><input id="labAsp" aria-label="X1 Lab ASP" type="number" min="0" step="10" /><input id="labCogs" aria-label="X1 Lab COGS" type="number" min="0" step="10" /></div>
             <div class="mini-grid"><strong>Luya Y</strong><input id="yAsp" aria-label="Luya Y ASP" type="number" min="0" step="100" /><input id="yCogs" aria-label="Luya Y COGS" type="number" min="0" step="100" /></div>
           </details>
 
           <details open>
-            <summary>Consumables Plans</summary>
+            <summary>Consumables Plans / 耗材订阅</summary>
             <div class="plan-inputs">
-              <div><strong>Standard</strong><small>8 trays / month</small></div>
-              <label>Price<input id="standardPrice" type="number" min="0" step="1" /></label>
-              <label>COGS<input id="standardCogs" type="number" min="0" step="1" /></label>
-              <div><strong>Power</strong><small>16 trays / month</small></div>
-              <label>Price<input id="powerPrice" type="number" min="0" step="1" /></label>
-              <label>COGS<input id="powerCogs" type="number" min="0" step="1" /></label>
+              <div><strong>Standard / 标准</strong><small>8 trays / month / 每月8盘</small></div>
+              <label>Price / 价格<input id="standardPrice" type="number" min="0" step="1" /></label>
+              <label>COGS / 成本<input id="standardCogs" type="number" min="0" step="1" /></label>
+              <div><strong>Power / 家庭</strong><small>16 trays / month / 每月16盘</small></div>
+              <label>Price / 价格<input id="powerPrice" type="number" min="0" step="1" /></label>
+              <label>COGS / 成本<input id="powerCogs" type="number" min="0" step="1" /></label>
             </div>
           </details>
 
           <details open>
-            <summary>Space Subscription</summary>
-            <label class="field"><span>Attach rate (%)</span><input id="spaceAttach" type="number" min="0" max="100" step="1" /></label>
-            <label class="field"><span>Standard plan mix (%)</span><input id="spaceStandardMix" type="number" min="0" max="100" step="1" /></label>
+            <summary>Space Subscription / Space订阅</summary>
+            <label class="field"><span>Attach rate / 订阅加入率 (%)</span><input id="spaceAttach" type="number" min="0" max="100" step="1" /></label>
+            <label class="field"><span>Standard mix / 标准套餐占比 (%)</span><input id="spaceStandardMix" type="number" min="0" max="100" step="1" /></label>
             <div class="retention-grid headings"><span>3M</span><span>6M</span><span>12M</span></div>
             <div class="retention-grid"><input id="spaceRet3" aria-label="Space 3-month retention" type="number" min="0" max="100" /><input id="spaceRet6" aria-label="Space 6-month retention" type="number" min="0" max="100" /><input id="spaceRet12" aria-label="Space 12-month retention" type="number" min="0" max="100" /></div>
           </details>
 
           <details open>
-            <summary>Lab Subscription</summary>
-            <label class="field"><span>Attach rate (%)</span><input id="labAttach" type="number" min="0" max="100" step="1" /></label>
-            <label class="field"><span>Standard plan mix (%)</span><input id="labStandardMix" type="number" min="0" max="100" step="1" /></label>
+            <summary>Lab Subscription / Lab订阅</summary>
+            <label class="field"><span>Attach rate / 订阅加入率 (%)</span><input id="labAttach" type="number" min="0" max="100" step="1" /></label>
+            <label class="field"><span>Standard mix / 标准套餐占比 (%)</span><input id="labStandardMix" type="number" min="0" max="100" step="1" /></label>
             <div class="retention-grid headings"><span>3M</span><span>6M</span><span>12M</span></div>
             <div class="retention-grid"><input id="labRet3" aria-label="Lab 3-month retention" type="number" min="0" max="100" /><input id="labRet6" aria-label="Lab 6-month retention" type="number" min="0" max="100" /><input id="labRet12" aria-label="Lab 12-month retention" type="number" min="0" max="100" /></div>
           </details>
 
           <details>
-            <summary>China Team & Opex</summary>
-            <label class="field"><span>China headcount</span><input id="teamHeadcount" type="number" min="0" step="1" /></label>
-            <label class="field"><span>Average salary (RMB / month)</span><input id="monthlySalaryRmb" type="number" min="0" step="1000" /></label>
-            <label class="field"><span>Office rent (RMB / month)</span><input id="monthlyRentRmb" type="number" min="0" step="1000" /></label>
-            <label class="field"><span>Monthly spend cap (RMB)</span><input id="monthlySpendCapRmb" type="number" min="0" step="10000" /></label>
-            <label class="field"><span>RMB per USD</span><input id="usdCny" type="number" min="1" step="0.1" /></label>
-            <label class="field"><span>Team cost growth (%)</span><input id="teamGrowth" type="number" min="0" max="100" step="1" /></label>
-            <label class="field"><span>R&D (% revenue)</span><input id="rdPct" type="number" min="0" max="50" step="1" /></label>
-            <label class="field"><span>G&A (% revenue)</span><input id="gaPct" type="number" min="0" max="50" step="1" /></label>
-            <label class="field"><span>Support / active sub ($)</span><input id="supportCost" type="number" min="0" step="1" /></label>
-            <div class="calculated-box"><span>2026 annual team cost</span><strong id="teamCostPreview">$0</strong></div>
+            <summary>China Team & Opex / 中国团队与费用</summary>
+            <label class="field"><span>China headcount / 中国团队人数</span><input id="teamHeadcount" type="number" min="0" step="1" /></label>
+            <label class="field"><span>Average salary / 平均月薪 (RMB)</span><input id="monthlySalaryRmb" type="number" min="0" step="1000" /></label>
+            <label class="field"><span>Office rent / 月租金 (RMB)</span><input id="monthlyRentRmb" type="number" min="0" step="1000" /></label>
+            <label class="field"><span>Monthly spend cap / 月支出上限</span><input id="monthlySpendCapRmb" type="number" min="0" step="10000" /></label>
+            <label class="field"><span>RMB per USD / 人民币兑美元</span><input id="usdCny" type="number" min="1" step="0.1" /></label>
+            <label class="field"><span>Team cost growth / 团队成本增速 (%)</span><input id="teamGrowth" type="number" min="0" max="100" step="1" /></label>
+            <label class="field"><span>R&D / 研发费用 (% revenue)</span><input id="rdPct" type="number" min="0" max="50" step="1" /></label>
+            <label class="field"><span>G&A / 管理费用 (% revenue)</span><input id="gaPct" type="number" min="0" max="50" step="1" /></label>
+            <label class="field"><span>Support / 活跃订阅用户支持成本 ($)</span><input id="supportCost" type="number" min="0" step="1" /></label>
+            <div class="calculated-box"><span>2026 annual team cost / 年化团队成本</span><strong id="teamCostPreview">$0</strong></div>
           </details>
         </aside>
 
         <div class="dashboard">
           <section class="module validation-module" id="validation">
             <div class="module-heading">
-              <div><p class="section-kicker">2026 · Validate</p><h2>Validation & Pre-Commercialization</h2></div>
-              <span class="management-tag">Management targets · Founder 100</span>
+              <div><p class="section-kicker">2026 · Validate / 验证</p><h2>Validation & Pre-Commercialization / 验证与商业化准备</h2></div>
+              <span class="management-tag">Management targets / 管理层目标 · Founder 100</span>
             </div>
             <div class="validation-grid">
-              <article><span>Product reliability</span><strong>&gt;95%</strong></article>
-              <article><span>NPS</span><strong>&gt;50</strong></article>
-              <article><span>Device active rate</span><strong>&gt;70%</strong></article>
-              <article><span>3-month retention</span><strong>&gt;85%</strong></article>
-              <article><span>Tray consumption</span><strong>8+ / mo</strong></article>
-              <article><span>Subscription attach</span><strong>&gt;55%</strong></article>
-              <article><span>UGC completion</span><strong>&gt;40%</strong></article>
-              <article><span>Failure rate</span><strong>&lt;5%</strong></article>
+              <article><span>Product reliability / 产品可靠性</span><strong>&gt;95%</strong></article>
+              <article><span>NPS / 净推荐值</span><strong>&gt;50</strong></article>
+              <article><span>Device active rate / 设备活跃率</span><strong>&gt;70%</strong></article>
+              <article><span>3-month retention / 3个月留存率</span><strong>&gt;85%</strong></article>
+              <article><span>Tray consumption / 托盘消耗量</span><strong>8+ / mo</strong></article>
+              <article><span>Subscription attach / 订阅加入率</span><strong>&gt;55%</strong></article>
+              <article><span>UGC completion / 内容产出率</span><strong>&gt;40%</strong></article>
+              <article><span>Failure rate / 故障率</span><strong>&lt;5%</strong></article>
             </div>
-            <p class="module-note">The 2026 Founder 100 cohort is excluded from commercial revenue. Its job is to validate product reliability, engagement, retention, consumables behavior, and advocacy before paid scale.</p>
+            <p class="module-note">The 2026 Founder 100 cohort is excluded from commercial revenue. Its job is to validate product reliability, engagement, retention, consumables behavior, and advocacy before paid scale. / 2026 年 Founder 100 批次不计入商业收入，核心任务是在规模化投放前验证产品可靠性、活跃度、留存、耗材使用习惯与用户推荐意愿。</p>
           </section>
 
           <section class="module" id="executiveForecast">
-            <div class="module-heading"><div><p class="section-kicker">1 · Executive Forecast</p><h2>Revenue, Units & Recurring Mix</h2></div><span id="breakEvenBadge" class="status-badge">Break-even</span></div>
-            <div class="table-scroll"><table class="forecast-table"><thead><tr><th>Year</th><th>Stage</th><th>Units</th><th>Hardware</th><th>Consumables</th><th>Total Revenue</th><th>Gross Profit</th><th>Recurring</th><th>Ending Cash</th></tr></thead><tbody id="executiveRows"></tbody></table></div>
+            <div class="module-heading"><div><p class="section-kicker">1 · Executive Forecast / 核心预测</p><h2>Revenue, Units & Recurring Mix / 营收、销量与持续收入</h2></div><span id="breakEvenBadge" class="status-badge">Break-even / 盈亏平衡</span></div>
+            <div class="table-scroll"><table class="forecast-table"><thead><tr><th>Year / 年份</th><th>Stage / 阶段</th><th>Units / 销量</th><th>Hardware / 硬件</th><th>Consumables / 耗材</th><th>Total Revenue / 总营收</th><th>Gross Profit / 毛利</th><th>Recurring / 持续收入</th><th>Ending Cash / 年末现金</th></tr></thead><tbody id="executiveRows"></tbody></table></div>
           </section>
 
           <section class="module" id="productModel">
-            <div class="module-heading"><div><p class="section-kicker">2 · Product Line Model</p><h2>Units, ASP, COGS & Hardware Revenue</h2></div><span>Commercial revenue starts in 2027</span></div>
-            <div class="table-scroll"><table><thead><tr><th>Product</th><th>2026</th><th>2027</th><th>2028</th><th>2029</th><th>2030</th><th>ASP</th><th>Gross Margin</th></tr></thead><tbody id="productRows"></tbody></table></div>
+            <div class="module-heading"><div><p class="section-kicker">2 · Product Line Model / 产品线模型</p><h2>Units, ASP, COGS & Hardware Revenue / 销量、售价、成本与硬件收入</h2></div><span>Commercial revenue starts in 2027 / 商业收入从2027年开始</span></div>
+            <div class="table-scroll"><table><thead><tr><th>Product / 产品</th><th>2026</th><th>2027</th><th>2028</th><th>2029</th><th>2030</th><th>ASP / 售价</th><th>Gross Margin / 毛利率</th></tr></thead><tbody id="productRows"></tbody></table></div>
             <div class="product-callouts" id="productCallouts"></div>
           </section>
 
           <section class="module" id="waterfall">
-            <div class="module-heading"><div><p class="section-kicker">Revenue Waterfall</p><h2>Where 2027 Revenue Comes From</h2></div><span id="waterfallTotal">Total $0</span></div>
+            <div class="module-heading"><div><p class="section-kicker">Revenue Waterfall / 营收构成</p><h2>Where 2027 Revenue Comes From / 2027年营收从何而来</h2></div><span id="waterfallTotal">Total / 合计 $0</span></div>
             <div class="waterfall" id="waterfallBars"></div>
           </section>
 
           <section class="module" id="consumablesModel">
-            <div class="module-heading"><div><p class="section-kicker">3 · Consumables Cohort Model</p><h2>Attach, Retain, Repurchase</h2></div><span class="management-tag">To be validated through Founder 100</span></div>
+            <div class="module-heading"><div><p class="section-kicker">3 · Consumables Cohort Model / 耗材队列模型</p><h2>Attach, Retain, Repurchase / 加入、留存与复购</h2></div><span class="management-tag">To be validated through Founder 100 / 待验证</span></div>
             <div class="subscription-summary" id="subscriptionSummary"></div>
-            <div class="table-scroll"><table><thead><tr><th>Year</th><th>New C-Devices</th><th>Cumulative Installed Base</th><th>Ending Active Subs</th><th>Consumables Revenue</th><th>Revenue Mix</th></tr></thead><tbody id="cohortRows"></tbody></table></div>
+            <div class="table-scroll"><table><thead><tr><th>Year / 年份</th><th>New C-Devices / 新增C端设备</th><th>Cumulative Installed Base / 累计装机</th><th>Ending Active Subs / 年末活跃订阅</th><th>Consumables Revenue / 耗材收入</th><th>Revenue Mix / 营收占比</th></tr></thead><tbody id="cohortRows"></tbody></table></div>
           </section>
 
           <section class="module" id="gtmModel">
-            <div class="module-heading"><div><p class="section-kicker">4 · Go-to-Market Build-up</p><h2>X1 Space Channel Sources</h2></div><span>Channels sum to annual Space units</span></div>
-            <div class="table-scroll"><table class="gtm-table"><thead><tr><th>Channel</th><th>2026</th><th>2027</th><th>2028</th><th>2029</th><th>2030</th></tr></thead><tbody id="gtmRows"></tbody><tfoot id="gtmFooter"></tfoot></table></div>
+            <div class="module-heading"><div><p class="section-kicker">4 · Go-to-Market Build-up / 渠道拆解</p><h2>X1 Space Channel Sources / X1 Space销量来源</h2></div><span>Channels sum to annual Space units / 渠道加总等于年度销量</span></div>
+            <div class="table-scroll"><table class="gtm-table"><thead><tr><th>Channel / 渠道</th><th>2026</th><th>2027</th><th>2028</th><th>2029</th><th>2030</th></tr></thead><tbody id="gtmRows"></tbody><tfoot id="gtmFooter"></tfoot></table></div>
             <div class="stage-timeline">
-              <article><strong>2026 · Validate</strong><span>Founder 100 · reliability · retention · UGC</span></article>
-              <article><strong>2027 · Prove PMF</strong><span>DTC · KOL/KOC · paid · Amazon · early B2B</span></article>
-              <article><strong>2028 · Scale</strong><span>Performance marketing · PR flywheel · retail pilot · international</span></article>
-              <article><strong>2029–30 · Expand</strong><span>Retail · distribution · celebrity · new markets · product halo</span></article>
+              <article><strong>2026 · Validate / 验证</strong><span>Founder 100 · 可靠性 · 留存 · UGC</span></article>
+              <article><strong>2027 · Prove PMF / 验证匹配</strong><span>DTC · KOL/KOC · 付费投放 · Amazon · 初步B端</span></article>
+              <article><strong>2028 · Scale / 规模化</strong><span>绩效营销 · PR飞轮 · 零售试点 · 国际市场</span></article>
+              <article><strong>2029–30 · Expand / 扩张</strong><span>零售 · 经销 · 明星合作 · 新市场 · 产品光环</span></article>
             </div>
           </section>
 
           <section class="module investor-module" id="investorView">
-            <div class="module-heading"><div><p class="section-kicker">5 · Scenario & Investor View</p><h2>Sanity Checks, Cash Need & Break-even</h2></div><span>Bottom-up forecast · TAM as context only</span></div>
+            <div class="module-heading"><div><p class="section-kicker">5 · Scenario & Investor View / 情景与投资人视角</p><h2>Sanity Checks, Cash Need & Break-even / 合理性校验、资金需求与盈亏平衡</h2></div><span>Bottom-up forecast · TAM as context only / 自下而上预测，TAM仅作校验</span></div>
             <div class="investor-grid">
-              <article><span>2030 annual C-device penetration</span><strong id="investorTam">0%</strong><small>Annual units ÷ TAM</small></article>
-              <article><span>2030 cumulative installed base</span><strong id="investorInstalled">0</strong><small>Space + Lab shipments</small></article>
-              <article><span>Peak external funding need</span><strong id="investorFunding">$0</strong><small id="investorFundingYear">No funding gap</small></article>
-              <article><span>Operating break-even</span><strong id="investorBreakEven">—</strong><small>First positive operating-profit year</small></article>
+              <article><span>2030 annual C-device penetration / 年度渗透率</span><strong id="investorTam">0%</strong><small>Annual units ÷ TAM / 年销量除以TAM</small></article>
+              <article><span>2030 cumulative installed base / 累计装机</span><strong id="investorInstalled">0</strong><small>Space + Lab shipments / 累计出货</small></article>
+              <article><span>Peak external funding need / 最大外部融资需求</span><strong id="investorFunding">$0</strong><small id="investorFundingYear">No funding gap / 无资金缺口</small></article>
+              <article><span>Operating break-even / 经营盈亏平衡</span><strong id="investorBreakEven">—</strong><small>First positive operating-profit year / 首个经营利润为正年份</small></article>
             </div>
             <div class="scenario-comparison" id="scenarioComparison"></div>
           </section>
         </div>
       </section>
     </main>
-    <script src="app.js?v=bottom-up-2030"></script>
+    <script src="app.js?v=bilingual-2030"></script>
   </body>
 </html>
