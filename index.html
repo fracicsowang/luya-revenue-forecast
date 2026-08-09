@@ -272,6 +272,33 @@
             </div>
           </section>
 
+          <section class="module sensitivity-module" id="sensitivity">
+            <div class="module-heading">
+              <div>
+                <p class="section-kicker t" data-en="2 · What actually moves the numbers" data-zh="2 · 什么才真正影响结果"></p>
+                <h2 class="t" data-en="Drag a lever, watch the model react" data-zh="拖动滑块，实时观察模型变化"></h2>
+              </div>
+              <button type="button" class="ghost-button" id="resetDrivers"><span class="t" data-en="Reset sliders" data-zh="重置滑块"></span></button>
+            </div>
+
+            <div class="impact-row" id="impactRow"></div>
+
+            <div class="sensitivity-layout">
+              <div class="slider-panel" id="sliderPanel"></div>
+              <figure class="chart-figure">
+                <figcaption>
+                  <h3 class="t" data-en="Sensitivity ranking" data-zh="敏感性排序"></h3>
+                  <div class="segmented tornado-toggle" role="group">
+                    <button type="button" data-tornado="ebitda"><span class="t" data-en="2030 EBITDA" data-zh="2030 经营利润"></span></button>
+                    <button type="button" data-tornado="funding"><span class="t" data-en="Funding need" data-zh="融资需求"></span></button>
+                  </div>
+                </figcaption>
+                <div class="chart-canvas" id="chartTornado"></div>
+                <p class="module-note" id="tornadoNote"></p>
+              </figure>
+            </div>
+          </section>
+
           <section class="module" id="cashModule">
             <div class="module-heading">
               <div>

@@ -469,6 +469,40 @@ article[data-def]:focus-visible, th[data-def]:focus-visible { outline: 2px solid
   box-shadow: 0 12px 30px rgba(22, 32, 51, 0.28);
 }
 
+/* ------------------------------------------------------------ sensitivity */
+
+.sensitivity-module { background: linear-gradient(135deg, #fff 0%, #f5f9ff 100%); }
+
+.impact-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 18px; }
+.impact-tile { padding: 14px 16px; border: 1px solid var(--line); background: var(--surface); }
+.impact-tile span { display: block; color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; }
+.impact-tile strong { display: block; margin: 9px 0 6px; font-size: clamp(20px, 2vw, 28px); line-height: 1; }
+.impact-delta { display: block; font-size: 12px; font-weight: 750; }
+.impact-delta.up { color: var(--green); }
+.impact-delta.down { color: var(--red); }
+.impact-delta.flat { color: var(--muted); }
+
+.sensitivity-layout { display: grid; grid-template-columns: minmax(0, 320px) minmax(0, 1fr); gap: 20px; align-items: start; }
+
+.slider-panel { min-width: 0; }
+.slider-group { margin: 16px 0 8px; color: var(--blue); font-size: 11px; font-weight: 850; text-transform: uppercase; }
+.slider-group:first-child { margin-top: 0; }
+.slider-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; margin-bottom: 11px; }
+.slider-row label { color: #344054; font-size: 12px; font-weight: 700; }
+.slider-row output { color: var(--ink); font-size: 12px; font-weight: 850; font-variant-numeric: tabular-nums; text-align: right; }
+.slider-row input[type="range"] { grid-column: 1 / -1; width: 100%; margin: 3px 0 0; accent-color: var(--blue); cursor: grab; }
+.slider-row input[type="range"]:active { cursor: grabbing; }
+
+.tornado-toggle { box-shadow: none; padding: 3px; }
+.tornado-toggle button { min-width: 0; height: 26px; padding: 0 10px; font-size: 11px; }
+
+#tornadoNote { margin-top: 12px; border-left-color: var(--blue); background: var(--blue-soft); color: #2853ab; }
+
+@media (max-width: 1250px) {
+  .sensitivity-layout { grid-template-columns: 1fr; }
+  .impact-row { grid-template-columns: 1fr; }
+}
+
 /* ---------------------------------------------------------------- modules */
 
 .validation-module { background: linear-gradient(135deg, #fff 0%, #fff8f4 100%); }

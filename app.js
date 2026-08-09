@@ -52,6 +52,9 @@ const defaultModel = {
   /* Tooling is a step cost, not a run rate: one spend per mould, in the year it
      is cut. 2026 for X1 Space, 2027 for X1 Lab, nothing after. Indexed by year. */
   capexRmb: [1500000, 1500000, 0, 0, 0],
+  /* What-if multipliers laid over the base plan (100 = plan as written), so the
+     volume sliders never overwrite the channel build-up underneath. */
+  drivers: { spaceUnits: 100, labUnits: 100, yUnits: 100 },
   products: {
     space: { name: "X1 Space", asp: 599, cogs: 120, cac: 200, net: 100 },
     lab: { name: "X1 Lab", asp: 999, cogs: 350, cac: 200, net: 100 },
@@ -222,19 +225,27 @@ function calculateForecast(sourceModel, scenarioName = activeScenario) {
      list price; they run through the direct "founder" channel at 100% net price.
      Validation and KOL units ship too, but their cost is booked as programme
      spend and they generate no revenue. */
+  /* The what-if multipliers are applied per channel, not to the total, so the
+     channel mix — and therefore the blended net-price factor — stays intact.
+     2026 is the fixed Founder cohort and is never scaled. */
+  const drivers = sourceModel.drivers;
   const channelUnits = years.map((_, index) =>
     Object.fromEntries(
       Object.entries(sourceModel.gtm).map(([key, channel]) => [
         key,
-        index === 0 ? (key === "founder" ? sourceModel.founder.paidUnits : 0) : Math.round(channel.values[index] * scenario.unitScale),
+        index === 0
+          ? key === "founder"
+            ? sourceModel.founder.paidUnits
+            : 0
+          : Math.round(channel.values[index] * scenario.unitScale * (drivers.spaceUnits / 100)),
       ])
     )
   );
 
   const units = {
     space: channelUnits.map((row) => Object.values(row).reduce((a, b) => a + b, 0)),
-    lab: sourceModel.units.lab.map((value, index) => (index === 0 ? 0 : Math.round(value * scenario.unitScale))),
-    y: sourceModel.units.y.map((value, index) => (index === 0 ? 0 : Math.round(value * scenario.unitScale))),
+    lab: sourceModel.units.lab.map((value, index) => (index === 0 ? 0 : Math.round(value * scenario.unitScale * (drivers.labUnits / 100)))),
+    y: sourceModel.units.y.map((value, index) => (index === 0 ? 0 : Math.round(value * scenario.unitScale * (drivers.yUnits / 100)))),
   };
   const rawSpaceUnits = years.map((_, index) =>
     index === 0 ? sourceModel.founder.paidUnits : Object.values(sourceModel.gtm).reduce((total, channel) => total + channel.values[index], 0)
@@ -680,6 +691,203 @@ function waterfallChart({ items, title, formatter, height = 330, width = 940 }) 
 
 function legendHtml(series) {
   return series.map((s) => `<span class="legend-item"><i style="background:${s.color}"></i>${escapeHtml(s.label)}</span>`).join("");
+}
+
+/* ----------------------------------------------------------- sensitivity -- */
+
+/* Drag-to-explore levers. Ordered by the measured elasticity of 2030 EBITDA,
+   so the sliders that matter most sit at the top of each group. */
+const DRIVER_SLIDERS = [
+  /* Steps are 1 on the currency levers so every default sits exactly on the
+     grid — a coarser step would silently round the plan value on reset. */
+  { g: ["Price", "定价"], path: ["products", "space", "asp"], en: "X1 Space price", zh: "X1 Space 售价", min: 300, max: 1200, step: 1, fmt: (v) => `$${number(v)}` },
+  { g: ["Price", "定价"], path: ["products", "lab", "asp"], en: "X1 Lab price", zh: "X1 Lab 售价", min: 500, max: 2000, step: 1, fmt: (v) => `$${number(v)}` },
+  { g: ["Price", "定价"], path: ["products", "y", "asp"], en: "Luya Y price", zh: "Luya Y 售价", min: 3000, max: 9000, step: 50, fmt: (v) => `$${number(v)}` },
+  { g: ["Price", "定价"], path: ["plans", "standard", "price"], en: "Standard plan / month", zh: "标准套餐月费", min: 15, max: 60, step: 1, fmt: (v) => `$${v}` },
+
+  { g: ["Cost", "成本"], path: ["products", "space", "cogs"], en: "X1 Space BOM", zh: "X1 Space BOM", min: 60, max: 400, step: 1, fmt: (v) => `$${number(v)}` },
+  { g: ["Cost", "成本"], path: ["products", "lab", "cogs"], en: "X1 Lab BOM", zh: "X1 Lab BOM", min: 150, max: 900, step: 1, fmt: (v) => `$${number(v)}` },
+  { g: ["Cost", "成本"], path: ["opex", "rdPct"], en: "R&D (% revenue)", zh: "研发费用 (% 营收)", min: 3, max: 30, step: 1, fmt: (v) => `${v}%` },
+
+  { g: ["Acquisition", "获客与规模"], path: ["products", "space", "cac"], en: "X1 Space CAC", zh: "X1 Space CAC", min: 50, max: 600, step: 5, fmt: (v) => `$${number(v)}` },
+  { g: ["Acquisition", "获客与规模"], path: ["products", "lab", "cac"], en: "X1 Lab CAC", zh: "X1 Lab CAC", min: 50, max: 600, step: 5, fmt: (v) => `$${number(v)}` },
+  { g: ["Acquisition", "获客与规模"], path: ["drivers", "spaceUnits"], en: "Space volume vs plan", zh: "Space 销量 vs 计划", min: 40, max: 200, step: 5, fmt: (v) => `${v}%` },
+  { g: ["Acquisition", "获客与规模"], path: ["drivers", "labUnits"], en: "Lab volume vs plan", zh: "Lab 销量 vs 计划", min: 40, max: 200, step: 5, fmt: (v) => `${v}%` },
+  { g: ["Acquisition", "获客与规模"], path: ["subscriptions", "space", "attach"], en: "Space attach rate", zh: "Space 订阅加入率", min: 20, max: 90, step: 1, fmt: (v) => `${v}%` },
+
+  { g: ["Working capital", "营运资金"], path: ["finance", "inventoryDays"], en: "Inventory days", zh: "库存周转天数", min: 15, max: 150, step: 5, fmt: (v) => `${v}d` },
+  { g: ["Working capital", "营运资金"], path: ["finance", "dso"], en: "Receivable days (DSO)", zh: "应收账期 DSO", min: 0, max: 120, step: 5, fmt: (v) => `${v}d` },
+  { g: ["Working capital", "营运资金"], path: ["finance", "dpo"], en: "Payable days (DPO)", zh: "应付账期 DPO", min: 0, max: 120, step: 5, fmt: (v) => `${v}d` },
+  { g: ["Working capital", "营运资金"], path: ["startingCash"], en: "Initial free cash", zh: "初始自由资金", min: 0, max: 6000000, step: 50000, fmt: (v) => money(v, 1) },
+];
+
+/* A range input under the cursor swallows wheel events and silently changes
+   value, so scrolling past this panel would edit the model. Block that and
+   scroll the page by hand instead. */
+document.addEventListener(
+  "wheel",
+  (event) => {
+    if (!event.target.closest?.('input[type="range"]')) return;
+    event.preventDefault();
+    window.scrollBy({ top: event.deltaY, left: event.deltaX, behavior: "instant" });
+  },
+  { passive: false }
+);
+
+/* Perturbed one at a time to measure elasticity: % change in the output for a
+   +10% change in the input. */
+const TORNADO_DRIVERS = [
+  { en: "X1 Space price", zh: "X1 Space 售价", bump: (m) => (m.products.space.asp *= 1.1) },
+  { en: "X1 Lab price", zh: "X1 Lab 售价", bump: (m) => (m.products.lab.asp *= 1.1) },
+  { en: "Luya Y price", zh: "Luya Y 售价", bump: (m) => (m.products.y.asp *= 1.1) },
+  { en: "R&D %", zh: "研发费用 %", bump: (m) => (m.opex.rdPct *= 1.1) },
+  { en: "X1 Space CAC", zh: "X1 Space CAC", bump: (m) => (m.products.space.cac *= 1.1) },
+  { en: "Space volume", zh: "Space 销量", bump: (m) => (m.drivers.spaceUnits *= 1.1) },
+  { en: "Lab volume", zh: "Lab 销量", bump: (m) => (m.drivers.labUnits *= 1.1) },
+  { en: "Standard plan price", zh: "标准套餐价", bump: (m) => (m.plans.standard.price *= 1.1) },
+  { en: "X1 Space BOM", zh: "X1 Space BOM", bump: (m) => (m.products.space.cogs *= 1.1) },
+  { en: "X1 Lab BOM", zh: "X1 Lab BOM", bump: (m) => (m.products.lab.cogs *= 1.1) },
+  { en: "Luya Y BOM", zh: "Luya Y BOM", bump: (m) => (m.products.y.cogs *= 1.1) },
+  { en: "Space attach rate", zh: "Space 加入率", bump: (m) => (m.subscriptions.space.attach *= 1.1) },
+  { en: "Space 12M retention", zh: "Space 12月留存", bump: (m) => (m.subscriptions.space.ret12 *= 1.1) },
+  { en: "Inventory days", zh: "库存周转天数", bump: (m) => (m.finance.inventoryDays *= 1.1) },
+  { en: "Receivable days (DSO)", zh: "应收账期 DSO", bump: (m) => (m.finance.dso *= 1.1) },
+  { en: "Payable days (DPO)", zh: "应付账期 DPO", bump: (m) => (m.finance.dpo *= 1.1) },
+  { en: "China team headcount", zh: "中国团队人数", bump: (m) => (m.opex.teamHeadcount *= 1.1) },
+  { en: "Warranty & returns", zh: "退货与保修", bump: (m) => (m.finance.warrantyPct *= 1.1) },
+];
+
+let tornadoMetric = "ebitda";
+
+function outcomeOf(sourceModel) {
+  const forecast = calculateForecast(sourceModel, activeScenario);
+  const trough = troughOf(forecast.rows);
+  return {
+    revenue: forecast.rows[4].totalRevenue,
+    ebitda: forecast.rows[4].ebitda,
+    funding: Math.max(0, -trough.endingCash),
+  };
+}
+
+function elasticities() {
+  const current = outcomeOf(model);
+  return TORNADO_DRIVERS.map((driver) => {
+    const probe = structuredClone(model);
+    driver.bump(probe);
+    const shifted = outcomeOf(probe);
+    const ratio = (after, before) => (Math.abs(before) < 1 ? 0 : (after - before) / Math.abs(before) / 0.1);
+    return {
+      label: t(driver.en, driver.zh),
+      ebitda: ratio(shifted.ebitda, current.ebitda),
+      funding: ratio(shifted.funding, current.funding),
+    };
+  })
+    .map((row) => ({ ...row, value: row[tornadoMetric] }))
+    .filter((row) => Number.isFinite(row.value))
+    .sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
+}
+
+/* Diverging bars around a zero axis: blue for "raises it", red for "lowers it". */
+function tornadoChart({ items, title, width = 660 }) {
+  const rowHeight = 26;
+  const pad = { top: 26, right: 58, bottom: 30, left: 150 };
+  const height = pad.top + pad.bottom + items.length * rowHeight;
+  const plotWidth = width - pad.left - pad.right;
+  const max = Math.max(...items.map((i) => Math.abs(i.value)), 0.2);
+  const scale = niceScale(-max, max, 2);
+  const x = (value) => pad.left + ((value - scale.min) / (scale.max - scale.min)) * plotWidth;
+  const barHeight = 14;
+
+  const grid = scale.ticks
+    .map((tick) => {
+      const isZero = Math.abs(tick) < 1e-9;
+      return `<line class="grid ${isZero ? "grid-zero" : ""}" x1="${x(tick)}" x2="${x(tick)}" y1="${pad.top - 6}" y2="${pad.top + items.length * rowHeight}" />
+        <text class="axis-label" x="${x(tick)}" y="${pad.top + items.length * rowHeight + 20}" text-anchor="middle">${tick > 0 ? "+" : ""}${tick.toFixed(1)}</text>`;
+    })
+    .join("");
+
+  const marks = items
+    .map((item, i) => {
+      const y = pad.top + i * rowHeight + (rowHeight - barHeight) / 2;
+      const zero = x(0);
+      const end = x(item.value);
+      const left = Math.min(zero, end);
+      const barWidth = Math.max(Math.abs(end - zero), 1);
+      const colour = item.value >= 0 ? SERIES.space : SERIES.decrease;
+      const labelX = item.value >= 0 ? end + 7 : end - 7;
+      const anchor = item.value >= 0 ? "start" : "end";
+      const tip = `<b>${escapeHtml(item.label)}</b><i class="blank"></i>${t("+10% input moves the output by", "输入 +10% 带动输出变动")} <em>${(item.value * 10).toFixed(1)}%</em>`;
+      return `<text class="axis-label" x="${pad.left - 12}" y="${y + barHeight - 2}" text-anchor="end">${escapeHtml(item.label)}</text>
+        <rect x="${left}" y="${y}" width="${barWidth}" height="${barHeight}" rx="3" fill="${colour}" />
+        <text class="value-label" x="${labelX}" y="${y + barHeight - 2}" text-anchor="${anchor}">${item.value > 0 ? "+" : ""}${item.value.toFixed(2)}</text>
+        <rect class="hit" x="${pad.left}" y="${y - 6}" width="${plotWidth}" height="${rowHeight}" data-tip="${escapeHtml(tip)}" />`;
+    })
+    .join("");
+
+  return `${svgOpen(width, height, title)}${grid}${marks}<line class="grid-zero" x1="${x(0)}" x2="${x(0)}" y1="${pad.top - 6}" y2="${pad.top + items.length * rowHeight}" stroke="#8fa0b8" />
+    <text class="axis-label" x="${pad.left + plotWidth / 2}" y="14" text-anchor="middle">${t("Elasticity — output % change per 1% input change", "弹性系数 —— 输入每变动 1%，输出变动的百分比")}</text></svg>`;
+}
+
+function renderSensitivity(forecast, rebuild) {
+  const panel = document.getElementById("sliderPanel");
+
+  if (rebuild) {
+    let html = "";
+    let lastGroup = null;
+    DRIVER_SLIDERS.forEach((slider, index) => {
+      const group = t(slider.g[0], slider.g[1]);
+      if (group !== lastGroup) {
+        html += `<h4 class="slider-group">${group}</h4>`;
+        lastGroup = group;
+      }
+      const value = getPath(model, slider.path);
+      html += `<div class="slider-row">
+        <label for="driver${index}">${t(slider.en, slider.zh)}</label>
+        <input id="driver${index}" class="driver-slider" type="range" data-driver="${index}" min="${slider.min}" max="${slider.max}" step="${slider.step}" value="${value}" />
+        <output data-driver-out="${index}">${slider.fmt(value)}</output>
+      </div>`;
+    });
+    panel.innerHTML = html;
+  } else {
+    DRIVER_SLIDERS.forEach((slider, index) => {
+      const value = getPath(model, slider.path);
+      const input = panel.querySelector(`[data-driver="${index}"]`);
+      const out = panel.querySelector(`[data-driver-out="${index}"]`);
+      if (input && input !== document.activeElement) input.value = value;
+      if (out) out.textContent = slider.fmt(value);
+    });
+  }
+
+  const baseline = outcomeOf(defaultModel);
+  const now = outcomeOf(model);
+  const tile = (labelEn, labelZh, value, base, invert) => {
+    const delta = value - base;
+    const pct = Math.abs(base) < 1 ? null : (delta / Math.abs(base)) * 100;
+    const good = invert ? delta <= 0 : delta >= 0;
+    const cls = Math.abs(delta) < 1 ? "flat" : good ? "up" : "down";
+    return `<article class="impact-tile">
+      <span>${t(labelEn, labelZh)}</span>
+      <strong>${money(value)}</strong>
+      <small class="impact-delta ${cls}">${Math.abs(delta) < 1 ? t("same as plan", "与计划一致") : `${delta > 0 ? "+" : "−"}${money(Math.abs(delta))}${pct === null ? "" : ` · ${delta > 0 ? "+" : "−"}${Math.abs(pct).toFixed(0)}%`}`}</small>
+    </article>`;
+  };
+  document.getElementById("impactRow").innerHTML =
+    tile("2030 revenue", "2030 营收", now.revenue, baseline.revenue, false) +
+    tile("2030 EBITDA", "2030 经营利润", now.ebitda, baseline.ebitda, false) +
+    tile("Peak funding need", "最大融资需求", now.funding, baseline.funding, true);
+
+  const items = elasticities();
+  document.getElementById("chartTornado").innerHTML = tornadoChart({
+    items,
+    title: t("Sensitivity ranking", "敏感性排序"),
+  });
+  document.querySelectorAll("[data-tornado]").forEach((button) => button.classList.toggle("active", button.dataset.tornado === tornadoMetric));
+  document.getElementById("tornadoNote").textContent = items.length
+    ? t(
+        `Top lever right now: ${items[0].label}. A 10% move changes ${tornadoMetric === "ebitda" ? "2030 EBITDA" : "the peak funding need"} by ${(items[0].value * 10).toFixed(1)}%.`,
+        `当前第一驱动因素：${items[0].label}。它变动 10%，${tornadoMetric === "ebitda" ? "2030 经营利润" : "最大融资需求"}变动 ${(items[0].value * 10).toFixed(1)}%。`
+      )
+    : "";
 }
 
 /* -------------------------------------------------------------- rendering -- */
@@ -1533,6 +1741,7 @@ function render({ rebuildTables = true } = {}) {
   renderCash(forecast);
   renderWaterfall(forecast);
   renderUnitEconomics(economics);
+  renderSensitivity(forecast, rebuildTables);
   renderProductModel(forecast, rebuildTables);
   renderConsumables(forecast);
   renderGtm(forecast, rebuildTables);
@@ -1793,6 +2002,30 @@ document.querySelectorAll("[data-scenario]").forEach((button) => {
     activeScenario = button.dataset.scenario;
     render();
   });
+});
+
+/* Sliders live inside markup that a full render rebuilds, so dragging one only
+   refreshes the readouts — never the slider being held. */
+document.addEventListener("input", (event) => {
+  if (!event.target.matches(".driver-slider")) return;
+  const slider = DRIVER_SLIDERS[Number(event.target.dataset.driver)];
+  setPath(model, slider.path, Number(event.target.value) || 0);
+  syncInputs();
+  render({ rebuildTables: false });
+});
+
+document.querySelectorAll("[data-tornado]").forEach((button) => {
+  button.addEventListener("click", () => {
+    tornadoMetric = button.dataset.tornado;
+    render({ rebuildTables: false });
+  });
+});
+
+document.getElementById("resetDrivers").addEventListener("click", () => {
+  DRIVER_SLIDERS.forEach((slider) => setPath(model, slider.path, getPath(defaultModel, slider.path)));
+  syncInputs();
+  render();
+  toast(t("Sliders reset to plan", "滑块已恢复到计划值"));
 });
 
 document.querySelectorAll("[data-lang-set]").forEach((button) => {
