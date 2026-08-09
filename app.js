@@ -1855,7 +1855,66 @@ document.addEventListener("scroll", () => {
   tooltip.hidden = true;
 }, true);
 
+/* --------------------------------------------------------------- the gate --
+   A courtesy lock. The access code ships in this file and the whole model is
+   in the page source, so this stops a forwarded link from opening on the first
+   click — nothing more. Real access control needs a private host. */
+
+const ACCESS_CODE = "LUYA";
+const GATE_KEY = "luya-gate";
+
+function unlock() {
+  document.body.removeAttribute("data-locked");
+  const gate = document.getElementById("gate");
+  gate.hidden = true;
+  try {
+    sessionStorage.setItem(GATE_KEY, "1");
+  } catch (error) {
+    /* storage unavailable — the gate simply reappears next time */
+  }
+}
+
+function initGate() {
+  const gate = document.getElementById("gate");
+  const form = document.getElementById("gateForm");
+  const input = document.getElementById("gateInput");
+  const error = document.getElementById("gateError");
+
+  let alreadyOpen = false;
+  try {
+    alreadyOpen = sessionStorage.getItem(GATE_KEY) === "1";
+  } catch (err) {
+    alreadyOpen = false;
+  }
+  if (alreadyOpen) {
+    unlock();
+    return;
+  }
+
+  gate.hidden = false;
+  input.focus();
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (input.value.trim().toUpperCase() === ACCESS_CODE) {
+      unlock();
+      return;
+    }
+    error.textContent = t("That code is not right. Try again.", "访问码不正确，请重试。");
+    error.hidden = false;
+    form.classList.remove("shake");
+    void form.offsetWidth; /* restart the animation */
+    form.classList.add("shake");
+    input.select();
+  });
+
+  input.addEventListener("input", () => {
+    error.hidden = true;
+  });
+}
+
 restore();
 applyLang();
 syncInputs();
 render();
+initGate();

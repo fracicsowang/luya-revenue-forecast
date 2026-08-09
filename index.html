@@ -5,9 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="LUYA 2026-2030 bottom-up forecast with CAC-driven S&M, channel net pricing, working capital and cash bridge. / 自下而上的产品、耗材、渠道、营运资金与现金流模型。" />
     <title>LUYA 5-Year Growth Model / 五年增长模型</title>
-    <link rel="stylesheet" href="styles.css?v=v3-charts-wc" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="stylesheet" href="styles.css?v=v4-gate" />
   </head>
-  <body data-lang="zh">
+  <body data-lang="zh" data-locked>
+    <!-- Soft gate only. The page source is public, so this keeps a forwarded
+         link from opening on the first click — it is not access control. -->
+    <div class="gate" id="gate">
+      <form class="gate-card" id="gateForm" autocomplete="off">
+        <p class="gate-eyebrow">LUYA · 2026–2030</p>
+        <h1 class="gate-title"><span class="t" data-en="Confidential financial model" data-zh="机密财务模型"></span></h1>
+        <p class="gate-body t" data-en="This page contains unit costs, margins, channel terms and funding requirements. Enter the access code to continue, and please do not forward the link." data-zh="本页包含单台成本、毛利、渠道条款与融资需求等信息。请输入访问码继续，并请勿转发本链接。"></p>
+        <label class="gate-field">
+          <span class="t" data-en="Access code" data-zh="访问码"></span>
+          <input id="gateInput" type="password" inputmode="text" autocapitalize="characters" spellcheck="false" data-aria-en="Access code" data-aria-zh="访问码" />
+        </label>
+        <p class="gate-error" id="gateError" hidden></p>
+        <button type="submit" class="gate-submit"><span class="t" data-en="Open model" data-zh="打开模型"></span></button>
+        <p class="gate-note t" data-en="A courtesy lock, not a security boundary — treat the contents as confidential regardless." data-zh="这是礼貌性的提示锁，并非安全边界 —— 无论如何请将内容视为机密处理。"></p>
+      </form>
+    </div>
+
     <main class="app-shell">
       <header class="topbar">
         <div class="topbar-lead">
@@ -458,6 +476,6 @@
     <div class="chart-tooltip" id="chartTooltip" role="status" hidden></div>
     <div class="definition-popover" id="definitionPopover" role="dialog" aria-live="polite" hidden></div>
     <div class="toast" id="toast" role="status" hidden></div>
-    <script src="app.js?v=v3-charts-wc"></script>
+    <script src="app.js?v=v4-gate"></script>
   </body>
 </html>
