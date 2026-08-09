@@ -410,7 +410,7 @@ article[data-def]::after {
 }
 article[data-def]:hover::after, article[data-def].def-active::after { opacity: 1; }
 article[data-def]:focus-visible, th[data-def]:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
-.kpi[data-def].def-active, .investor-grid article[data-def].def-active, .validation-grid article[data-def].def-active { box-shadow: 0 0 0 2px var(--blue); }
+.kpi[data-def].def-active, .planning-grid article[data-def].def-active, .validation-grid article[data-def].def-active { box-shadow: 0 0 0 2px var(--blue); }
 
 .definition-popover {
   position: fixed;
@@ -565,11 +565,11 @@ tfoot tr + tr th { border-top: 1px solid var(--line); }
 .stage-timeline strong { color: var(--blue); font-size: 13px; }
 .stage-timeline span { margin-top: 9px; color: var(--muted); font-size: 12px; line-height: 1.45; }
 
-.investor-module { background: linear-gradient(135deg, #fff 0%, #f4f1ff 100%); }
-.investor-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; }
-.investor-grid article { padding: 15px; border: 1px solid #ddd5f3; background: rgba(255,255,255,.8); }
-.investor-grid span, .investor-grid small { display: block; color: var(--muted); font-size: 11px; }
-.investor-grid strong { display: block; margin: 10px 0 7px; color: var(--violet); font-size: 25px; }
+.planning-module { background: linear-gradient(135deg, #fff 0%, #f4f1ff 100%); }
+.planning-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; }
+.planning-grid article { padding: 15px; border: 1px solid #ddd5f3; background: rgba(255,255,255,.8); }
+.planning-grid span, .planning-grid small { display: block; color: var(--muted); font-size: 11px; }
+.planning-grid strong { display: block; margin: 10px 0 7px; color: var(--violet); font-size: 25px; }
 .scenario-comparison { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; margin-top: 14px; }
 .scenario-comparison article { padding: 14px; border: 1px solid var(--line); background: #fff; }
 .scenario-comparison article.active { border: 2px solid var(--violet); background: var(--violet-soft); }
@@ -587,7 +587,7 @@ tfoot tr + tr th { border-top: 1px solid var(--line); }
 
 @media (max-width: 1250px) {
   .kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .validation-grid, .product-callouts, .investor-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .validation-grid, .product-callouts, .planning-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 980px) {
@@ -605,7 +605,7 @@ tfoot tr + tr th { border-top: 1px solid var(--line); }
   .topbar-controls { justify-items: stretch; }
   .segmented, .action-row { justify-content: space-between; }
   .segmented button { flex: 1; min-width: 0; }
-  .kpi-grid, .validation-grid, .product-callouts, .subscription-summary, .investor-grid, .scenario-comparison, .stage-timeline { grid-template-columns: 1fr; }
+  .kpi-grid, .validation-grid, .product-callouts, .subscription-summary, .planning-grid, .scenario-comparison, .stage-timeline { grid-template-columns: 1fr; }
   .module-heading { align-items: flex-start; flex-direction: column; }
   .module-heading > span { text-align: left; }
   .stage-timeline article { border-right: 0; }

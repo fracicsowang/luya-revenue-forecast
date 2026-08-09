@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="LUYA 2026-2030 bottom-up forecast with CAC-driven S&M, channel net pricing, working capital and cash bridge. / 自下而上的产品、耗材、渠道、营运资金与现金流模型。" />
+    <meta name="description" content="LUYA internal operating model, 2026-2030. / LUYA 内部经营模型，用于校准工作节奏。" />
     <title>LUYA 5-Year Growth Model / 五年增长模型</title>
     <meta name="robots" content="noindex, nofollow" />
-    <link rel="stylesheet" href="styles.css?v=v5-sliders" />
+    <link rel="stylesheet" href="styles.css?v=v6-internal" />
   </head>
   <body data-lang="zh" data-locked>
     <!-- Soft gate only. The page source is public, so this keeps a forwarded
@@ -29,9 +29,9 @@
     <main class="app-shell">
       <header class="topbar">
         <div class="topbar-lead">
-          <p class="eyebrow"><span class="t" data-en="LUYA Investor Model" data-zh="LUYA 投资人模型"></span> · 2026–2030</p>
+          <p class="eyebrow"><span class="t" data-en="LUYA Internal Operating Model" data-zh="LUYA 内部经营模型"></span> · 2026–2030</p>
           <h1><span class="t" data-en="5-Year Growth Model" data-zh="五年增长模型"></span></h1>
-          <p class="subtitle t" data-en="Bottom-up product, channel, consumables, working-capital and cash model." data-zh="自下而上的产品、渠道、耗材、营运资金与现金流模型。"></p>
+          <p class="subtitle t" data-en="Internal reference for setting our own pace: what has to be true each year, what it costs, and when cash gets tight." data-zh="内部参考，用于校准我们自己的工作节奏：每一年需要做到什么、要花多少钱、现金什么时候会紧。"></p>
           <p class="hint-line"><span class="hint-mark">i</span><span class="t" data-en="Hover or tap any metric marked with a dotted underline to see what it means, how it is calculated and where the number comes from." data-zh="把鼠标移到任何带虚线下划线的指标上，即可看到它的含义、计算口径与数字来源。点击可固定弹窗。"></span></p>
         </div>
         <div class="topbar-controls">
@@ -470,19 +470,19 @@
             </div>
           </section>
 
-          <section class="module investor-module" id="investorView">
+          <section class="module planning-module" id="planningView">
             <div class="module-heading">
               <div>
-                <p class="section-kicker t" data-en="7 · Scenario &amp; investor view" data-zh="7 · 情景与投资人视角"></p>
+                <p class="section-kicker t" data-en="7 · Scenario planning" data-zh="7 · 情景规划"></p>
                 <h2 class="t" data-en="Sanity checks, cash need &amp; break-even" data-zh="合理性校验、资金需求与盈亏平衡"></h2>
               </div>
               <span class="t" data-en="Bottom-up forecast · TAM as context only" data-zh="自下而上预测 · TAM 仅作校验"></span>
             </div>
-            <div class="investor-grid">
-              <article data-def="inv.tamAnnual" tabindex="0"><span class="t" data-en="2030 annual penetration" data-zh="2030 年度渗透率"></span><strong id="investorTam">0%</strong><small class="t" data-en="Annual C-device units ÷ TAM" data-zh="年销量 ÷ 目标家庭数"></small></article>
-              <article data-def="inv.tamCum" tabindex="0"><span class="t" data-en="2030 cumulative penetration" data-zh="2030 累计渗透率"></span><strong id="investorTamCum">0%</strong><small class="t" data-en="Installed base ÷ TAM" data-zh="累计装机 ÷ 目标家庭数"></small></article>
-              <article data-def="kpi.funding" tabindex="0"><span class="t" data-en="Peak external funding need" data-zh="最大外部融资需求"></span><strong id="investorFunding">$0</strong><small id="investorFundingYear">—</small></article>
-              <article data-def="inv.breakEven" tabindex="0"><span class="t" data-en="EBITDA break-even" data-zh="经营盈亏平衡"></span><strong id="investorBreakEven">—</strong><small class="t" data-en="First positive EBITDA year" data-zh="首个经营利润为正年份"></small></article>
+            <div class="planning-grid">
+              <article data-def="plan.tamAnnual" tabindex="0"><span class="t" data-en="2030 annual penetration" data-zh="2030 年度渗透率"></span><strong id="planTam">0%</strong><small class="t" data-en="Annual C-device units ÷ TAM" data-zh="年销量 ÷ 目标家庭数"></small></article>
+              <article data-def="plan.tamCum" tabindex="0"><span class="t" data-en="2030 cumulative penetration" data-zh="2030 累计渗透率"></span><strong id="planTamCum">0%</strong><small class="t" data-en="Installed base ÷ TAM" data-zh="累计装机 ÷ 目标家庭数"></small></article>
+              <article data-def="kpi.funding" tabindex="0"><span class="t" data-en="Peak external funding need" data-zh="最大外部融资需求"></span><strong id="planFunding">$0</strong><small id="planFundingYear">—</small></article>
+              <article data-def="plan.breakEven" tabindex="0"><span class="t" data-en="EBITDA break-even" data-zh="经营盈亏平衡"></span><strong id="planBreakEven">—</strong><small class="t" data-en="First positive EBITDA year" data-zh="首个经营利润为正年份"></small></article>
             </div>
             <div class="scenario-comparison" id="scenarioComparison"></div>
           </section>
@@ -509,8 +509,8 @@
          cache buster, so a forgotten version bump serves fresh markup with a
          stale script and the page half-renders in silence. This check runs from
          the always-fresh HTML and turns that into a visible message. -->
-    <script>window.EXPECTED_ASSET_VERSION = "v5-sliders";</script>
-    <script src="app.js?v=v5-sliders"></script>
+    <script>window.EXPECTED_ASSET_VERSION = "v6-internal";</script>
+    <script src="app.js?v=v6-internal"></script>
     <script>
       (function () {
         if (window.ASSET_VERSION === window.EXPECTED_ASSET_VERSION) return;

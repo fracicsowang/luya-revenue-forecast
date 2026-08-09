@@ -7,7 +7,7 @@
 /* Must match the ?v= query on this file's <script> tag and
    window.EXPECTED_ASSET_VERSION in index.html. Bump all three together on
    every deploy — index.html checks it and warns if a stale copy is cached. */
-window.ASSET_VERSION = "v5-sliders";
+window.ASSET_VERSION = "v6-internal";
 
 const years = [2026, 2027, 2028, 2029, 2030];
 const stageText = [
@@ -1248,19 +1248,19 @@ function renderGtm(forecast, rebuild) {
   document.getElementById("gtmFooter").innerHTML = totalRow + adjustedRow + netRow;
 }
 
-function renderInvestorView(forecast, allScenarios) {
+function renderScenarioPlanning(forecast, allScenarios) {
   const terminal = forecast.rows[4];
   const trough = troughOf(forecast.rows);
   const funding = Math.max(0, -trough.endingCash);
   const breakEven = forecast.rows.find((row) => row.year > 2026 && row.ebitda >= 0);
 
-  document.getElementById("investorTam").textContent = percent(terminal.tamPenetration, 2);
-  document.getElementById("investorTamCum").textContent = percent(terminal.tamCumulative, 2);
-  document.getElementById("investorFunding").textContent = money(funding);
-  document.getElementById("investorFundingYear").textContent = funding
+  document.getElementById("planTam").textContent = percent(terminal.tamPenetration, 2);
+  document.getElementById("planTamCum").textContent = percent(terminal.tamCumulative, 2);
+  document.getElementById("planFunding").textContent = money(funding);
+  document.getElementById("planFundingYear").textContent = funding
     ? `${t("Peak gap in", "最大缺口年份")} ${trough.year}`
     : t("No funding gap in forecast", "预测期内无资金缺口");
-  document.getElementById("investorBreakEven").textContent = breakEven ? breakEven.year : t("Beyond 2030", "2030 年以后");
+  document.getElementById("planBreakEven").textContent = breakEven ? breakEven.year : t("Beyond 2030", "2030 年以后");
 
   document.getElementById("scenarioComparison").innerHTML = ["bear", "base", "bull"]
     .map((name) => {
@@ -1290,8 +1290,8 @@ function renderMethodology(forecast) {
     [
       t("How generous that approximation is", "这个近似有多宽松"),
       t(
-        `Worth knowing before quoting these numbers. The step weighting above holds the 3-month rate all the way to month 9 and never uses the 12-month rate for a new cohort at all. A stricter trapezoidal average between the measured points — 0.125 + 0.25×3M + 0.375×6M + 0.25×12M — gives ${(0.125 + 0.25 * forecast.subscriptions.space.ret3 + 0.375 * forecast.subscriptions.space.ret6 + 0.25 * forecast.subscriptions.space.ret12).toFixed(3)} against ${(0.25 + 0.5 * forecast.subscriptions.space.ret3 + 0.25 * forecast.subscriptions.space.ret6).toFixed(3)}, roughly ${percent(1 - (0.125 + 0.25 * forecast.subscriptions.space.ret3 + 0.375 * forecast.subscriptions.space.ret6 + 0.25 * forecast.subscriptions.space.ret12) / (0.25 + 0.5 * forecast.subscriptions.space.ret3 + 0.25 * forecast.subscriptions.space.ret6), 0)} less first-year consumables revenue per new cohort. Neither is a substitute for a true monthly cohort engine, which would remove the approximation entirely.`,
-        `在对外引用这些数字前值得知道。上面的阶梯权重把 3 个月留存率一直用到第 9 个月，而且新队列完全没有用到 12 个月留存率。如果改用测点之间的梯形平均——0.125 + 0.25×3月 + 0.375×6月 + 0.25×12月——结果是 ${(0.125 + 0.25 * forecast.subscriptions.space.ret3 + 0.375 * forecast.subscriptions.space.ret6 + 0.25 * forecast.subscriptions.space.ret12).toFixed(3)}，而当前口径是 ${(0.25 + 0.5 * forecast.subscriptions.space.ret3 + 0.25 * forecast.subscriptions.space.ret6).toFixed(3)}，新队列首年耗材收入约低 ${percent(1 - (0.125 + 0.25 * forecast.subscriptions.space.ret3 + 0.375 * forecast.subscriptions.space.ret6 + 0.25 * forecast.subscriptions.space.ret12) / (0.25 + 0.5 * forecast.subscriptions.space.ret3 + 0.25 * forecast.subscriptions.space.ret6), 0)}。两者都替代不了真正的月度队列模型——那才能彻底消除这层近似。`
+        `Worth knowing before we plan against these numbers. The step weighting above holds the 3-month rate all the way to month 9 and never uses the 12-month rate for a new cohort at all. A stricter trapezoidal average between the measured points — 0.125 + 0.25×3M + 0.375×6M + 0.25×12M — gives ${(0.125 + 0.25 * forecast.subscriptions.space.ret3 + 0.375 * forecast.subscriptions.space.ret6 + 0.25 * forecast.subscriptions.space.ret12).toFixed(3)} against ${(0.25 + 0.5 * forecast.subscriptions.space.ret3 + 0.25 * forecast.subscriptions.space.ret6).toFixed(3)}, roughly ${percent(1 - (0.125 + 0.25 * forecast.subscriptions.space.ret3 + 0.375 * forecast.subscriptions.space.ret6 + 0.25 * forecast.subscriptions.space.ret12) / (0.25 + 0.5 * forecast.subscriptions.space.ret3 + 0.25 * forecast.subscriptions.space.ret6), 0)} less first-year consumables revenue per new cohort. Neither is a substitute for a true monthly cohort engine, which would remove the approximation entirely.`,
+        `在拿这些数字定计划之前值得知道。上面的阶梯权重把 3 个月留存率一直用到第 9 个月，而且新队列完全没有用到 12 个月留存率。如果改用测点之间的梯形平均——0.125 + 0.25×3月 + 0.375×6月 + 0.25×12月——结果是 ${(0.125 + 0.25 * forecast.subscriptions.space.ret3 + 0.375 * forecast.subscriptions.space.ret6 + 0.25 * forecast.subscriptions.space.ret12).toFixed(3)}，而当前口径是 ${(0.25 + 0.5 * forecast.subscriptions.space.ret3 + 0.25 * forecast.subscriptions.space.ret6).toFixed(3)}，新队列首年耗材收入约低 ${percent(1 - (0.125 + 0.25 * forecast.subscriptions.space.ret3 + 0.375 * forecast.subscriptions.space.ret6 + 0.25 * forecast.subscriptions.space.ret12) / (0.25 + 0.5 * forecast.subscriptions.space.ret3 + 0.25 * forecast.subscriptions.space.ret6), 0)}。两者都替代不了真正的月度队列模型——那才能彻底消除这层近似。`
       ),
     ],
     [
@@ -1533,11 +1533,11 @@ function buildDefinitions(forecast, economics) {
       "销售费用 = CAC × 台数，不是营收的百分比——所以它随销量增长，而不随售价增长。任一年的完整拆解见「利润桥」图。"));
 
   add("exec.recurring", "derived", t("Recurring revenue mix", "持续收入占比"),
-    t("Consumables revenue as a share of total revenue. This is the number that determines whether the company is valued as hardware or as a subscription business.",
-      "耗材收入占总营收的比例。这个数字决定了公司被按硬件估值还是按订阅业务估值。"),
+    t("Consumables revenue as a share of total revenue. It tells us how much of next year's revenue we already have before selling a single new device — the higher it goes, the less every year has to start from zero.",
+      "耗材收入占总营收的比例。它衡量的是：在卖出下一台新设备之前，明年的收入已经锁定了多少 —— 这个比例越高，每年就越不需要从零开始。"),
     `${money(r30.consumablesRevenue)} ÷ ${money(r30.totalRevenue)} = ${percent(r30.recurringMix)} (2030)`,
-    t("It climbs slowly because hardware keeps growing too. The mix only inflects once unit growth flattens and the installed base keeps paying — which happens beyond this forecast window.",
-      "它上升缓慢，因为硬件收入也在同步增长。只有当销量增速放缓、而装机基数继续付费时，这个比例才会真正跃升——那要到本预测窗口之后。"));
+    t("It climbs slowly because hardware keeps growing too. The mix only inflects once unit growth flattens and the installed base keeps paying — which happens beyond this window. Practical read: through 2030 we still have to sell hardware hard every single year.",
+      "它上升缓慢，因为硬件收入也在同步增长。只有当销量增速放缓、而装机基数继续付费时，这个比例才会真正跃升——那要到本预测窗口之后。对工作节奏的含义是：到 2030 年之前，每一年我们都还得靠硬件销量硬拼。"));
 
   /* ---- cash bridge ---- */
   add("cash.tax", "derived", t("Corporate tax", "所得税"),
@@ -1690,29 +1690,29 @@ function buildDefinitions(forecast, economics) {
     t("Editable per channel. Shifting volume between direct and retail changes gross margin without changing a single unit of the sales plan — which is why the channel mix matters as much as the total.",
       "可按渠道逐一修改。在直营与零售之间挪动销量，会在销售计划一台不变的情况下改变毛利率——这就是渠道结构和总量同样重要的原因。"));
 
-  /* ---- investor view ---- */
-  add("inv.tamAnnual", "derived", t("2030 annual penetration", "2030 年度渗透率"),
+  /* ---- scenario planning ---- */
+  add("plan.tamAnnual", "derived", t("2030 annual penetration", "2030 年度渗透率"),
     t("Annual consumer device shipments as a share of target households. A flow measure — what you sell in one year, not what is installed.",
       "当年 C 端设备出货量占目标家庭数的比例。这是流量口径——一年卖出多少，而不是累计装了多少。"),
     `${number(r30.cDeviceUnits)} ÷ ${number(model.tam)} = ${percent(r30.tamPenetration, 2)}`,
     t("Presented purely as a sanity check. Nothing in this model is derived from TAM — the forecast is built bottom-up from channels and then compared against market size, never the other way round.",
       "仅作合理性校验之用。本模型没有任何数字是从 TAM 推导出来的——预测是从渠道自下而上搭起来、再拿去和市场规模对照，而不是反过来。"));
 
-  add("inv.tamCum", "derived", t("2030 cumulative penetration", "2030 累计渗透率"),
+  add("plan.tamCum", "derived", t("2030 cumulative penetration", "2030 累计渗透率"),
     t("Total installed base as a share of target households. A stock measure — the right one for judging whether saturation is anywhere close.",
       "累计装机量占目标家庭数的比例。这是存量口径——判断是否接近市场饱和应该看这个数。"),
     `${number(r30.installedBase)} ÷ ${number(model.tam)} = ${percent(r30.tamCumulative, 2)}`,
     t("Both penetration figures are shown because quoting only the annual one understates how much of the market has already been taken by the end of the forecast.",
       "两个口径都列出来，是因为只报年度渗透率会低估预测期末实际已占领的市场份额。"));
 
-  add("inv.breakEven", "derived", t("EBITDA break-even", "经营盈亏平衡"),
+  add("plan.breakEven", "derived", t("EBITDA break-even", "经营盈亏平衡"),
     t("The first year operating profit turns positive. Note this is not the same as being cash-positive — working capital keeps cash negative for longer.",
       "经营利润首次转正的年份。注意这与「现金转正」不是一回事——营运资金会让现金在更长时间内保持为负。"),
     breakEven
       ? `${t("EBITDA positive", "经营利润转正")} ${breakEven.year} (${money(breakEven.ebitda)}) · ${t("cash positive", "现金转正")} ${forecast.rows.find((row) => row.endingCash >= 0)?.year ?? t("beyond 2030", "2030 年以后")}`
       : t("No positive EBITDA year in the forecast window", "预测期内没有经营利润为正的年份"),
-    t("The gap between these two dates is the part founders most often miss, and it is exactly the window an investor will ask you to bridge.",
-      "这两个时点之间的差距，是创始人最容易忽略的部分，也恰恰是投资人会要求你说明如何跨过去的那段窗口。"));
+    t("The gap between these two dates is the window the team has to plan around: the business looks profitable on paper while the bank balance is still falling.",
+      "这两个时点之间的差距，正是团队需要提前安排的窗口期：账面上已经开始赚钱，银行余额却还在往下走。"));
 
   return map;
 }
@@ -1750,7 +1750,7 @@ function render({ rebuildTables = true } = {}) {
   renderProductModel(forecast, rebuildTables);
   renderConsumables(forecast);
   renderGtm(forecast, rebuildTables);
-  renderInvestorView(forecast, allScenarios);
+  renderScenarioPlanning(forecast, allScenarios);
   renderMethodology(forecast);
 
   const founder = model.founder;
