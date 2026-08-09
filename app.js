@@ -49,7 +49,9 @@ const defaultModel = {
     kolPromoPerUnitRmb: 5000,
     paidUnits: 40,
   },
-  toolingRmb: 1500000,
+  /* Tooling is a step cost, not a run rate: one spend per mould, in the year it
+     is cut. 2026 for X1 Space, 2027 for X1 Lab, nothing after. Indexed by year. */
+  capexRmb: [1500000, 1500000, 0, 0, 0],
   products: {
     space: { name: "X1 Space", asp: 599, cogs: 120, cac: 200, net: 100 },
     lab: { name: "X1 Lab", asp: 999, cogs: 350, cac: 200, net: 100 },
@@ -92,7 +94,6 @@ const defaultModel = {
     dpo: 60,
     warrantyPct: 3,
     taxRate: 25,
-    capexPct: 2,
   },
 };
 
@@ -105,7 +106,7 @@ const scenarioConfig = {
 /* Bump this whenever the default assumptions or the model schema change —
    otherwise a saved model from a previous session is merged over the new
    defaults and silently keeps the old numbers. */
-const STORAGE_KEY = "luya-forecast-v6";
+const STORAGE_KEY = "luya-forecast-v7";
 
 let model = structuredClone(defaultModel);
 let activeScenario = "base";
@@ -390,7 +391,7 @@ function calculateForecast(sourceModel, scenarioName = activeScenario) {
       lossCarryforward += -row.ebitda;
     }
 
-    const capex = index === 0 ? rmbToUsd(sourceModel, sourceModel.toolingRmb) : row.hardwareRevenue * (finance.capexPct / 100);
+    const capex = rmbToUsd(sourceModel, sourceModel.capexRmb[index] || 0);
     const freeCashFlow = row.ebitda - tax - deltaNwc - capex;
     const beginningCash = cash;
     cash += freeCashFlow;
@@ -700,7 +701,11 @@ const inputBindings = {
   kolUnits: ["founder", "kolUnits"],
   kolPromoPerUnitRmb: ["founder", "kolPromoPerUnitRmb"],
   paidUnits: ["founder", "paidUnits"],
-  toolingRmb: ["toolingRmb"],
+  capex2026: ["capexRmb", 0],
+  capex2027: ["capexRmb", 1],
+  capex2028: ["capexRmb", 2],
+  capex2029: ["capexRmb", 3],
+  capex2030: ["capexRmb", 4],
   spaceAsp: ["products", "space", "asp"],
   spaceCogs: ["products", "space", "cogs"],
   spaceCac: ["products", "space", "cac"],
@@ -741,7 +746,6 @@ const inputBindings = {
   dpo: ["finance", "dpo"],
   warrantyPct: ["finance", "warrantyPct"],
   taxRate: ["finance", "taxRate"],
-  capexPct: ["finance", "capexPct"],
 };
 
 function troughOf(rows) {
@@ -1359,11 +1363,11 @@ function buildDefinitions(forecast, economics) {
       "增长会吞噬营运资金。2027 年经营利润为正，年末现金却比年初还少——原因完全在这一行。"));
 
   add("cash.capex", "derived", t("Capital expenditure", "资本开支"),
-    t("Cash spent on tooling, moulds and equipment. Shown as cash rather than depreciated, which is why the profit line above is labelled EBITDA.",
-      "用于模具、工装与设备的现金支出。按现金列示而非计提折旧，这也是上方利润口径叫 EBITDA 的原因。"),
-    `2026: ${money(r26.capex)} ${t("fixed tooling", "固定模具投入")} · 2027+: ${fin.capexPct}% × ${t("hardware revenue", "硬件收入")} → ${money(r27.capex)}`,
-    t("The 2026 figure is a direct input; later years scale with hardware revenue as a rough proxy for new SKUs and line expansion.",
-      "2026 年为直接输入；之后各年按硬件收入的固定比例估算，作为新品开发与产线扩充的粗略代理。"));
+    t("Cash spent on tooling and moulds. Shown as cash rather than depreciated, which is why the profit line above is labelled EBITDA.",
+      "用于模具与工装的现金支出。按现金列示而非计提折旧，这也是上方利润口径叫 EBITDA 的原因。"),
+    `${forecast.rows.map((row, i) => `${row.year}: ${number(model.capexRmb[i] || 0)} RMB`).join(" · ")} → ${t("total", "合计")} ${money(forecast.rows.reduce((sum, row) => sum + row.capex, 0))}`,
+    t("Each year is entered directly in RMB, because tooling is a step cost: you pay once per mould in the year it is cut, not as a running percentage of revenue. 2026 tools X1 Space, 2027 tools X1 Lab, and nothing is scheduled after that — so any new SKU beyond the current roadmap would add a spend this model does not carry.",
+      "每一年都按人民币直接填入，因为模具是阶梯式支出：一套模开一次、在开模当年一次性付清，而不是随营收滚动的百分比。2026 年为 X1 Space 开模，2027 年为 X1 Lab 开模，之后没有安排——因此当前路线图之外的任何新品，都会带来本模型未计入的支出。"));
 
   add("cash.fcf", "derived", t("Free cash flow", "自由现金流"),
     t("What actually lands in the bank each year: operating profit, less tax, less the working-capital build, less capital spending.",
@@ -1549,6 +1553,8 @@ function render({ rebuildTables = true } = {}) {
   const marginBox = document.getElementById("founderMarginPreview");
   marginBox.textContent = `${money(soldGp)} · $${number(validation.hardware.space.netAsp)} ${t("price vs", "售价 vs")} $${number(validation.hardware.space.unitCost)} ${t("cost", "成本")}`;
   marginBox.parentElement.classList.toggle("warn-box", soldGp < 0);
+  document.getElementById("capexPreview").textContent =
+    `${number(model.capexRmb.reduce((a, b) => a + (b || 0), 0))} RMB · ${money(forecast.rows.reduce((sum, row) => sum + row.capex, 0))}`;
   document.getElementById("teamCostPreview").textContent = money(annualTeamCost(model));
   document.getElementById("spaceNetPreview").textContent = `$${number(forecast.rows[4].hardware.space.netAsp)} · ${percent(forecast.rows[4].spaceChannelFactor, 1)}`;
   document.querySelectorAll("[data-scenario]").forEach((button) => button.classList.toggle("active", button.dataset.scenario === activeScenario));

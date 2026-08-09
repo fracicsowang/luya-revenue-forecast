@@ -83,7 +83,6 @@
             <summary class="t" data-en="Core &amp; cash" data-zh="核心与现金"></summary>
             <label class="field"><span class="t" data-en="TAM households" data-zh="目标家庭数"></span><input id="tam" type="number" min="1000000" step="1000000" /></label>
             <label class="field"><span class="t" data-en="Initial free cash ($)" data-zh="初始自由资金 ($)"></span><input id="startingCash" type="number" min="0" step="100000" /></label>
-            <label class="field"><span class="t" data-en="2026 tooling / NRE (RMB)" data-zh="2026 模具与 NRE (RMB)"></span><input id="toolingRmb" type="number" min="0" step="100000" /></label>
           </details>
 
           <details open>
@@ -182,8 +181,18 @@
             <label class="field"><span class="t" data-en="Payable days (DPO)" data-zh="应付账期 DPO (天)"></span><input id="dpo" type="number" min="0" step="5" /></label>
             <label class="field"><span class="t" data-en="Warranty &amp; returns (% hardware revenue)" data-zh="退货与保修 (% 硬件收入)"></span><input id="warrantyPct" type="number" min="0" max="20" step="0.5" /></label>
             <label class="field"><span class="t" data-en="Corporate tax rate (%)" data-zh="企业所得税率 (%)"></span><input id="taxRate" type="number" min="0" max="50" step="1" /></label>
-            <label class="field"><span class="t" data-en="Capex (% hardware revenue)" data-zh="资本开支 (% 硬件收入)"></span><input id="capexPct" type="number" min="0" max="20" step="0.5" /></label>
             <p class="input-note t" data-en="Inventory is built against next year’s COGS, so a launch year funds the ramp before it sells it." data-zh="库存按下一年度 COGS 备货，因此放量前一年就要垫付这笔现金。"></p>
+          </details>
+
+          <details open>
+            <summary class="t" data-en="Tooling &amp; capex by year" data-zh="逐年模具与资本开支"></summary>
+            <label class="field"><span>2026 <span class="t" data-en="tooling (RMB)" data-zh="模具 (RMB)"></span></span><input id="capex2026" type="number" min="0" step="100000" /></label>
+            <label class="field"><span>2027 <span class="t" data-en="tooling (RMB)" data-zh="模具 (RMB)"></span></span><input id="capex2027" type="number" min="0" step="100000" /></label>
+            <label class="field"><span>2028 <span class="t" data-en="tooling (RMB)" data-zh="模具 (RMB)"></span></span><input id="capex2028" type="number" min="0" step="100000" /></label>
+            <label class="field"><span>2029 <span class="t" data-en="tooling (RMB)" data-zh="模具 (RMB)"></span></span><input id="capex2029" type="number" min="0" step="100000" /></label>
+            <label class="field"><span>2030 <span class="t" data-en="tooling (RMB)" data-zh="模具 (RMB)"></span></span><input id="capex2030" type="number" min="0" step="100000" /></label>
+            <div class="calculated-box"><span class="t" data-en="5-year capex total" data-zh="五年资本开支合计"></span><strong id="capexPreview">—</strong></div>
+            <p class="input-note t" data-en="Tooling is a step cost — one spend per mould, in the year it is cut. Entered per year rather than as a percentage of revenue. 2026 tools X1 Space, 2027 tools X1 Lab." data-zh="模具是阶梯式支出——一套模开一次，在开模当年一次性付清，因此按年填写而非按营收比例推算。2026 年为 X1 Space 开模，2027 年为 X1 Lab 开模。"></p>
           </details>
         </aside>
 
