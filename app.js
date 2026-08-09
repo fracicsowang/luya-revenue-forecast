@@ -4,6 +4,11 @@
    cohorts, CAC-driven S&M, working capital, tax and a cash bridge.
    ========================================================================== */
 
+/* Must match the ?v= query on this file's <script> tag and
+   window.EXPECTED_ASSET_VERSION in index.html. Bump all three together on
+   every deploy — index.html checks it and warns if a stale copy is cached. */
+window.ASSET_VERSION = "v5-sliders";
+
 const years = [2026, 2027, 2028, 2029, 2030];
 const stageText = [
   ["Validate", "验证"],

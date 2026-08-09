@@ -6,7 +6,7 @@
     <meta name="description" content="LUYA 2026-2030 bottom-up forecast with CAC-driven S&M, channel net pricing, working capital and cash bridge. / 自下而上的产品、耗材、渠道、营运资金与现金流模型。" />
     <title>LUYA 5-Year Growth Model / 五年增长模型</title>
     <meta name="robots" content="noindex, nofollow" />
-    <link rel="stylesheet" href="styles.css?v=v4-gate" />
+    <link rel="stylesheet" href="styles.css?v=v5-sliders" />
   </head>
   <body data-lang="zh" data-locked>
     <!-- Soft gate only. The page source is public, so this keeps a forwarded
@@ -503,6 +503,25 @@
     <div class="chart-tooltip" id="chartTooltip" role="status" hidden></div>
     <div class="definition-popover" id="definitionPopover" role="dialog" aria-live="polite" hidden></div>
     <div class="toast" id="toast" role="status" hidden></div>
-    <script src="app.js?v=v4-gate"></script>
+    <div class="stale-banner" id="staleBanner" hidden></div>
+
+    <!-- The HTML is always revalidated but app.js sits behind a query-string
+         cache buster, so a forgotten version bump serves fresh markup with a
+         stale script and the page half-renders in silence. This check runs from
+         the always-fresh HTML and turns that into a visible message. -->
+    <script>window.EXPECTED_ASSET_VERSION = "v5-sliders";</script>
+    <script src="app.js?v=v5-sliders"></script>
+    <script>
+      (function () {
+        if (window.ASSET_VERSION === window.EXPECTED_ASSET_VERSION) return;
+        var banner = document.getElementById("staleBanner");
+        banner.innerHTML =
+          '<strong>页面缓存过期 / Cached page is out of date</strong>' +
+          '<span>浏览器加载的是旧版本脚本，部分模块不会显示。请强制刷新：Mac 按 ⌘⇧R，Windows 按 Ctrl+F5。' +
+          ' / Your browser loaded an old script, so some modules will not appear. Hard-refresh to fix.</span>';
+        banner.hidden = false;
+        document.body.removeAttribute("data-locked");
+      })();
+    </script>
   </body>
 </html>

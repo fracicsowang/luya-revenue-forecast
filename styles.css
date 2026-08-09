@@ -456,6 +456,22 @@ article[data-def]:focus-visible, th[data-def]:focus-visible { outline: 2px solid
 .def-close { margin-top: 11px; width: 100%; height: 30px; border: 1px solid var(--line); background: #f7f9fc; color: #475467; font-size: 12px; font-weight: 750; }
 .def-close:hover { border-color: var(--blue); color: var(--blue); }
 
+.stale-banner {
+  position: fixed;
+  z-index: 200;
+  inset: 0 0 auto;
+  display: grid;
+  gap: 4px;
+  padding: 14px 20px;
+  background: #b83f4b;
+  color: #fff;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.stale-banner[hidden] { display: none; }
+.stale-banner strong { font-size: 14px; }
+.stale-banner span { opacity: .92; }
+
 .toast {
   position: fixed;
   z-index: 50;
