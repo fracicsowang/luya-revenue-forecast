@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Luya X1-Space cost structure and unit economics model for internal agency planning." />
+    <title>Luya X1-Space Unit Economics / 单位经济模型</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="stylesheet" href="styles.css?v=unit-economics-v1" />
+  </head>
+  <body data-locked>
+    <div class="gate" id="gate">
+      <form class="gate-card" id="gateForm" autocomplete="off">
+        <p class="gate-eyebrow">LUYA · X1-SPACE</p>
+        <h1 class="gate-title">Confidential unit economics</h1>
+        <p class="gate-body">本页包含产品成本、物流、毛利及 CAC 等内部信息。请输入访问码继续，并请勿转发链接。</p>
+        <label class="gate-field">
+          <span>访问码 / Access code</span>
+          <input id="gateInput" type="password" inputmode="text" autocapitalize="characters" spellcheck="false" />
+        </label>
+        <p class="gate-error" id="gateError" hidden></p>
+        <button type="submit" class="gate-submit">打开模型 / Open model</button>
+        <p class="gate-note">这是礼貌性的提示锁，并非安全边界。GitHub 仓库中的页面源码仍然公开可见。</p>
+      </form>
+    </div>
+    <main class="shell">
+      <header class="topbar">
+        <div class="topbar-copy">
+          <p class="eyebrow">LUYA · AGENCY WORKING MODEL</p>
+          <h1>X1-Space <span>Unit Economics</span></h1>
+          <p class="subtitle">成本结构、首单经济性与 Seed Tray 经常性收入模型</p>
+        </div>
+        <div class="document-meta">
+          <strong>V1.0 · 2026.08</strong>
+          <span>Confidential · Internal Use Only</span>
+          <a href="../">5-Year Growth Model / 五年经营模型</a>
+        </div>
+      </header>
+
+      <section class="executive-strip" aria-label="核心单位经济指标">
+        <article class="metric metric-black">
+          <span>MSRP / 建议零售价</span>
+          <strong id="kpiMsrp">$599</strong>
+          <small>Shipping calculated at checkout</small>
+        </article>
+        <article class="metric metric-blue">
+          <span>Factory Cost / 工厂成本</span>
+          <strong id="kpiFactory">$299</strong>
+          <small id="kpiFactoryMargin">50.1% manufacturing margin</small>
+        </article>
+        <article class="metric metric-orange">
+          <span>Landed Cost / 落地成本</span>
+          <strong id="kpiLanded">$405</strong>
+          <small>Commercial cost before CAC</small>
+        </article>
+        <article class="metric metric-green">
+          <span>Contribution / 获客前贡献利润</span>
+          <strong id="kpiContribution">$194</strong>
+          <small id="kpiContributionMargin">32.4% of MSRP</small>
+        </article>
+        <article class="metric metric-red">
+          <span>After CAC / 获客后首单利润</span>
+          <strong id="kpiAfterCac">−$6</strong>
+          <small id="kpiBreakEvenCac">Break-even CAC: $194</small>
+        </article>
+      </section>
+
+      <section class="workspace">
+        <aside class="inputs" aria-label="模型参数">
+          <div class="panel-heading">
+            <div><p class="section-index">MODEL INPUTS</p><h2>可调参数</h2></div>
+            <button type="button" id="resetButton">重置</button>
+          </div>
+          <p class="input-help">所有金额均为单台或单订单美元；Factory Cost 以人民币明细和汇率自动换算。</p>
+
+          <details open>
+            <summary>硬件定价与汇率</summary>
+            <label class="field"><span>MSRP</span><span class="money-input"><b>$</b><input id="msrp" type="number" min="0" step="10" /></span></label>
+            <label class="field"><span>RMB / USD 汇率</span><input id="usdCny" type="number" min="1" step="0.1" /></label>
+            <label class="field"><span>Target CAC</span><span class="money-input"><b>$</b><input id="targetCac" type="number" min="0" step="10" /></span></label>
+          </details>
+
+          <details open>
+            <summary>量产制造成本 · RMB</summary>
+            <label class="field"><span>塑胶件（注塑）</span><input id="plasticRmb" type="number" min="0" step="50" /></label>
+            <label class="field"><span>钣金件</span><input id="sheetMetalRmb" type="number" min="0" step="50" /></label>
+            <label class="field"><span>电气件</span><input id="electricalRmb" type="number" min="0" step="50" /></label>
+            <label class="field"><span>包装及辅料</span><input id="packagingRmb" type="number" min="0" step="50" /></label>
+            <label class="field"><span>组装</span><input id="assemblyRmb" type="number" min="0" step="50" /></label>
+            <div class="calculated"><span>Factory Cost</span><strong id="factoryPreview">¥2,150 · $299</strong></div>
+          </details>
+
+          <details open>
+            <summary>商业落地成本 · USD</summary>
+            <label class="field"><span>国际海运</span><span class="money-input"><b>$</b><input id="oceanFreight" type="number" min="0" step="1" /></span></label>
+            <label class="field"><span>港杂、报关及清关</span><span class="money-input"><b>$</b><input id="customs" type="number" min="0" step="1" /></span></label>
+            <label class="field"><span>美国港口至仓库</span><span class="money-input"><b>$</b><input id="drayage" type="number" min="0" step="1" /></span></label>
+            <label class="field"><span>3PL 入库及仓储</span><span class="money-input"><b>$</b><input id="storage" type="number" min="0" step="1" /></span></label>
+            <label class="field"><span>订单履约</span><span class="money-input"><b>$</b><input id="fulfillment" type="number" min="0" step="1" /></span></label>
+            <label class="field"><span>美国境内配送</span><span class="money-input"><b>$</b><input id="domesticShipping" type="number" min="0" step="1" /></span></label>
+            <label class="field"><span>支付手续费</span><span class="money-input"><b>$</b><input id="paymentFee" type="number" min="0" step="1" /></span></label>
+            <label class="field"><span>售后准备金</span><span class="money-input"><b>$</b><input id="warrantyReserve" type="number" min="0" step="1" /></span></label>
+          </details>
+
+          <details>
+            <summary>Seed Tray 假设</summary>
+            <label class="field"><span>单 Tray 制造成本</span><span class="money-input"><b>$</b><input id="trayUnitCost" type="number" min="0" step="0.1" /></span></label>
+            <label class="field"><span>小包裹物流</span><span class="money-input"><b>$</b><input id="trayShipping" type="number" min="0" step="1" /></span></label>
+            <label class="field"><span>包邮门槛</span><span class="money-input"><b>$</b><input id="freeShippingThreshold" type="number" min="0" step="1" /></span></label>
+          </details>
+        </aside>
+
+        <div class="dashboard">
+          <section class="module overview-module">
+            <div class="module-heading">
+              <div><p class="section-index">01 · PRODUCT OVERVIEW</p><h2>产品与决策边界</h2></div>
+              <span class="status">美国 DTC · 8 Tray</span>
+            </div>
+            <div class="spec-grid">
+              <article><span>Product</span><strong>Luya X1-Space</strong></article>
+              <article><span>Product size</span><strong>17” × 17” × 17”</strong></article>
+              <article><span>Package size</span><strong>19” × 19” × 19”</strong></article>
+              <article><span>Package weight</span><strong>20 kg / 44 lb</strong></article>
+            </div>
+            <p class="callout"><b>Purpose.</b> 本工具供营销、品牌、增长及商业合作伙伴进行 CAC、广告预算、定价、Founder 100、订阅套餐与未来 LTV 验证规划。数据为 2026 年 8 月内部预算，不是经审计财务数据。</p>
+          </section>
+
+          <section class="module">
+            <div class="module-heading">
+              <div><p class="section-index">02 · HARDWARE COST BRIDGE</p><h2>从量产成本到商业落地成本</h2></div>
+              <span id="landedBadge" class="status status-blue">$405 / unit</span>
+            </div>
+            <div class="cost-bridge" id="costBridge"></div>
+            <div class="table-scroll">
+              <table>
+                <thead><tr><th>Cost layer / 成本层</th><th>Per unit</th><th>% MSRP</th><th>Management use</th></tr></thead>
+                <tbody id="hardwareRows"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="module split-module">
+            <div>
+              <div class="module-heading compact">
+                <div><p class="section-index">03 · CAC ENVELOPE</p><h2>首单利润敏感性</h2></div>
+              </div>
+              <div class="cac-gauge" id="cacGauge"></div>
+              <div class="cac-scenarios" id="cacScenarios"></div>
+              <p class="module-note">目标不是依靠首单硬件赚取高利润，而是在硬件、物流与获客基本被首单覆盖后，让 Seed Tray、营养液及未来 AI 服务形成长期价值。</p>
+            </div>
+            <div>
+              <div class="module-heading compact">
+                <div><p class="section-index">PROTOTYPE REFERENCE</p><h2>工程样机成本</h2></div>
+              </div>
+              <div class="prototype-box">
+                <strong>¥11,000–12,000 / 台</strong>
+                <span>塑胶件 + 玻璃 ¥9,500</span>
+                <span>钣金件 ¥200</span>
+                <span>电气件 ¥1,000</span>
+                <p>CNC、小批量加工及 3D 打印，仅用于研发、演示和 Founder 测试，不代表正式量产成本。</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="module">
+            <div class="module-heading">
+              <div><p class="section-index">04 · SEED TRAY ECONOMICS</p><h2>套餐、AOV 与贡献利润</h2></div>
+              <span class="status status-green">Free shipping ≥ <b id="thresholdBadge">$72</b></span>
+            </div>
+            <div class="tray-cards" id="trayCards"></div>
+            <div class="table-scroll">
+              <table class="tray-table">
+                <thead><tr><th>Plan / 套餐</th><th>Trays</th><th>Price</th><th>Price / tray</th><th>Product cost</th><th>Shipping</th><th>Contribution</th><th>Margin</th></tr></thead>
+                <tbody id="trayRows"></tbody>
+              </table>
+            </div>
+            <p class="module-note">当前套餐比较未计支付手续费与仓储。8 Tray 由用户承担运费；达到包邮门槛的订单由 Luya 承担内部预算运费。</p>
+          </section>
+
+          <section class="module">
+            <div class="module-heading">
+              <div><p class="section-index">05 · REVENUE PLATFORM</p><h2>从硬件入口到经常性收入</h2></div>
+              <span class="status">Hardware + Recurring Revenue</span>
+            </div>
+            <div class="platform-steps">
+              <article><b>1</b><div><span>Hardware</span><strong>建立家庭种植入口</strong></div></article>
+              <article><b>2</b><div><span>Seed Tray</span><strong>持续复购种子托盘</strong></div></article>
+              <article><b>3</b><div><span>Consumables</span><strong>Nutrients · 品种 · 配件</strong></div></article>
+              <article><b>4</b><div><span>Software & AI</span><strong>助手 · 分析 · 个性化计划</strong></div></article>
+            </div>
+          </section>
+
+          <section class="module agency-module">
+            <div class="module-heading">
+              <div><p class="section-index">06 · AGENCY SCORECARD</p><h2>当前必须验证的七项指标</h2></div>
+              <span class="status status-orange">LTV 暂不对外公布</span>
+            </div>
+            <div class="agency-grid">
+              <article><b>01</b><span>Hardware CAC</span><strong>能否稳定 ≤ $200</strong></article>
+              <article><b>02</b><span>Best-converting pack</span><strong>8 / 16 / 24 / 32 Tray</strong></article>
+              <article><b>03</b><span>AOV strategy</span><strong>$72 包邮是否有效</strong></article>
+              <article><b>04</b><span>Tray attach rate</span><strong>设备首单带购比例</strong></article>
+              <article><b>05</b><span>Repeat purchase</span><strong>30 / 60 / 90 天复购率</strong></article>
+              <article><b>06</b><span>Consumption</span><strong>月均 Tray 使用量</strong></article>
+              <article><b>07</b><span>Subscription</span><strong>转化率与留存率</strong></article>
+            </div>
+            <div class="model-boundary">
+              <strong>LTV 建模边界</strong>
+              <p>正式上市后，基于真实 CAC、Attach Rate、AOV、30/60/90 天复购、订阅转化、月度留存、平均 Tray 消耗和 Customer Lifetime 逐步建立。当前不把管理层假设包装成已验证事实。</p>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <footer>
+        <strong>Confidential – Internal Use Only</strong>
+        <span>仅供 Luya 与授权合作伙伴进行内部业务规划及商业讨论使用，未经授权不得向第三方传播或引用。</span>
+      </footer>
+    </main>
+    <script src="app.js?v=unit-economics-v1"></script>
+  </body>
+</html>
